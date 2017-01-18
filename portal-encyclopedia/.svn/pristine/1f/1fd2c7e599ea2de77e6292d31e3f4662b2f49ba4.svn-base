@@ -1,0 +1,14 @@
+package com.wangku.was.encyclopedia.constant;
+
+public class BaikeCode {
+
+	public static final String CATEGORY_BAIKE = "113"; //品类百科 
+	
+	public static final String BAIKE_Hot_WORDS  = "114"; //百科 热词
+	
+	public static final String BAIKE_BRAND  = "115"; //百科品牌
+	
+	public static final String BAIKE_CLASSIFICATION  = "116"; //分类百科
+	
+	
+}

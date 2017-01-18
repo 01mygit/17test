@@ -1,0 +1,37 @@
+package com.wangku.was.encyclopedia.utils;
+
+import com.wangku.was.dic.model.SysDictionary;
+import com.wangku.was.dic.service.ISysDictionaryService;
+
+public class SysDictionaryCompute {
+	private static SysDictionaryCompute instance = null;
+	
+	public static synchronized SysDictionaryCompute getInstance(){
+		if(instance == null){
+			instance = new SysDictionaryCompute();
+		}
+		return instance;
+	}
+	
+	public SysDictionary setQueryBeanConfig(String type,String status,SysDictionary queryBean){
+		if(null == queryBean){
+			queryBean = new SysDictionary();
+		}
+		queryBean.setDicCode(type);
+		queryBean.setDicSubCode(status);
+		
+		return queryBean;
+	}
+
+	public int getStatusNum(ISysDictionaryService service,SysDictionary queryBean){
+		if(queryBean == null){
+			return 0;
+		}
+		SysDictionary querySysEntity = service.getBySubId(queryBean);
+		if(querySysEntity == null){
+			return 0;
+		}
+		return Integer.parseInt(querySysEntity.getDicValue());
+	}
+	
+}

@@ -1,0 +1,9 @@
+memcached.servers=172.16.0.206:11211
+default.memcached.servers=172.16.0.206:11611
+shop.memcached.servers=172.16.0.206:11111
+member.memcached.servers=172.16.0.206:11811
+oppor.memcached.servers=172.16.0.206:11311
+system.memcached.servers=172.16.0.206:11411
+img.memcached.servers=172.16.0.206:11511
+home.memcached.servers=172.16.0.206:11611
+other.memcached.servers=172.16.0.206:11711

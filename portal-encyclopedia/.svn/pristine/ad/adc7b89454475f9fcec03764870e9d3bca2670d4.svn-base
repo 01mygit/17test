@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>专业的电子商务百科全书_中国网库品类百科</title>
+<meta name="description" content="中国网库品类百科是一部集电子商务知识于一体的百科全书，中国网库品类百科为国内外所有商家提供最准确的商品知识，我们的宗旨让每一个用户更方便、更精准的去了解每一款产品。" />
+<meta name="keywords" content="品类百科，百科，baike,百科全书，中国网库" />
+<#include "/common/global.html">
+</head>
+
+<body>
+<!--header begin-->
+${portalTopUrl!}
+<!--header end-->
+<div class="wrapper clear">
+    <div class="mT10">
+            <div class="cy_box wei_h fl">
+                <div class="baike">
+                     <div class=" fl b_he">
+                            <a href="http://encyclopedia.99114.cn/detail?id=6433" target="_blank"><img src="http://images.99114.cn/ad_image/zz/baike/1.jpg"></a> 
+        	       		</div>
+                     <!--bannercg end-->
+                     <div class="cg_r fr" id="categoryBaikeDIV"></div>
+                      <script type="text/javascript">
+                    		//站点ID为1 -品类百科置顶
+							ajaxDiv("categoryBaike","categoryBaikeDIV");
+					  </script> 
+                     <!--cg_r end-->
+                </div>
+                <!--baike end-->
+            </div>
+            
+            <div class="merchants fr">
+                <h2><span>品类排行</span></h2>
+                <div class="z_div">
+                	<p>
+                    <span><i class="i_o">1</i><a href="http://gly.99114.com/" class="org_c" target="_blank">橄榄油</a></span>
+                    <span><i class="i_g">6</i><a href="http://hongzao.99114.com/" target="_blank">红枣</a></span>
+                    </p>
+                    <p>
+                    <span><i class="i_o">2</i><a href="http://chayou.99114.com/" class="org_c" target="_blank">茶油</a></span>
+                    <span><i class="i_g">7</i><a href="http://shanzha.99114.com/" target="_blank">山楂</a></span>
+                    </p>
+                    <p>
+                    <span><i class="i_o">3</i><a href="http://guazi.99114.com/" class="org_c" target="_blank">瓜子</a></span>
+                    <span><i class="i_g">8</i><a href="http://zxw.99114.com/" target="_blank">竹纤维</a><img src="../template/images/zxh_xin.gif"  class="mL5"/></span>
+                    </p>
+                    <p><span><i class="i_g">4</i><a href="http://ydx.99114.com" class="gra_c" target="_blank">运动鞋</a></span>
+                    <span><i class="i_g">9</i><a href="http://meigui.99114.com/" target="_blank">玫瑰</a></span>
+                    </p>
+                    <p><span><i class="i_g">5</i><a href="http://fengmi.99114.com/" class="gra_c" target="_blank">蜂蜜</a></span>
+                    <span><i class="i_g">10</i><a href="http://chenshan.99114.com/" target="_blank">衬衫</a></span>
+                    </p>
+                </div>
+                <!--z_div end-->
+            </div>
+    </div>
+    <!--mT10 end-->        
+</div>
+<!--wraper end-->
+<div class="wrapper clear">
+   <!--<h2 class="cy_title">创业项目分类<span></span></h2>-->
+   <div class="z_l fl mT10 zx_tab">
+      <h2 class="cy_title">百科热词</h2>
+      <div class="z_list">
+	     <div id="baikeHotWordsDIV"></div>
+	     
+	   	 <script type="text/javascript">
+	                		//站点ID为1 -品类百科置顶
+				ajaxDiv("baikeHotWords","baikeHotWordsDIV");
+		 </script> 
+	     
+	     <div id="baikeHotWordsTJDIV"></div>
+	     <script type="text/javascript">
+	           //站点ID为1 -品类百科 推荐
+			ajaxDiv("baikeHotWordsTJ","baikeHotWordsTJDIV");
+	  	</script> 
+      </div>
+      <!--z_list end-->
+   </div>
+   <!--z_l end-->
+   <div class="z_r fr mT10 zx_tab">
+       <h2 class="cy_title">品牌百科</h2>
+       <ul class="pinp">
+       	<div id="baikeBrandDIV"></div>
+       </ul>
+       <script type="text/javascript">
+	           //品牌百科
+			ajaxDiv("baikeBrand","baikeBrandDIV");
+	  	</script>
+   </div>
+   <!--z_r end-->
+</div>
+<!--wrapper end-->
+<div class="wr_div">
+<a href="http://stock.99114.cn/list?k=%25E7%25AF%25AE%25E7%2590%2583%25E9%259E%258B" target="_blank">
+<img src="http://images.99114.cn/ad_image/zz/baike/t1.png" title="广告图" alt="广告图" width="1000" height="100" /></a>
+</div>
+<div class="wrapper clear">
+      <ul class="pinp zxh_ul" id="baikeClassificationDIV">
+
+       </ul>
+        <script type="text/javascript">
+	 
+			ajaxDiv("baikeClassification","baikeClassificationDIV");
+	  	</script>
+</div>
+<!--wrapper end-->
+<div class="wr_div">
+<a href="http://stock.99114.cn/list?k=%25E8%2587%25AA%25E8%25A1%258C%25E8%25BD%25A6" target="_blank"><img src="http://images.99114.cn/ad_image/zz/baike/t2.png" title="" alt="" width="1000" height="100" />
+</a>
+</div>
+<div class="wrapper clear">
+     <div class="cy_box wid_z fl">
+          <h2 class="cy_title"><a href="/list" class="fr zxh_more" target="_blank">更多&gt;</a>
+			<a href="/list" class="fr zxh_moren" name="bkProduct">其他</a>
+          <div class="num_zxh">
+             <a href="javascript:void(0)" id="A" name="bkProduct">A</a>
+             <a href="javascript:void(0)" id="B" name="bkProduct">B</a>
+             <a href="javascript:void(0)" id="C" name="bkProduct">C</a>
+             <a href="javascript:void(0)" id="D" name="bkProduct">D</a>
+             <a href="javascript:void(0)" id="E" name="bkProduct">E</a>
+             <a href="javascript:void(0)" id="F" name="bkProduct">F</a>
+             <a href="javascript:void(0)" id="G" name="bkProduct">G</a>
+             <a href="javascript:void(0)" id="H" name="bkProduct">H</a>
+             <a href="javascript:void(0)" id="I" name="bkProduct">I</a>
+             <a href="javascript:void(0)" id="J" name="bkProduct">J</a>
+             <a href="javascript:void(0)" id="K" name="bkProduct">K</a>
+             <a href="javascript:void(0)" id="L" name="bkProduct">L</a>
+             <a href="javascript:void(0)" id="M" name="bkProduct">M</a>
+             <a href="javascript:void(0)" id="N" name="bkProduct">N</a>
+             <a href="javascript:void(0)" id="O" name="bkProduct">O</a>
+             <a href="javascript:void(0)" id="P" name="bkProduct">P</a>
+             <a href="javascript:void(0)" id="Q" name="bkProduct">Q</a>
+             <a href="javascript:void(0)" id="R" name="bkProduct">R</a>
+             <a href="javascript:void(0)" id="S" name="bkProduct">S</a>
+             <a href="javascript:void(0)" id="T" name="bkProduct">T</a>
+             <a href="javascript:void(0)" id="U" name="bkProduct">U</a>
+             <a href="javascript:void(0)" id="V" name="bkProduct">V</a>
+             <a href="javascript:void(0)" id="W" name="bkProduct">W</a>
+             <a href="javascript:void(0)" id="X" name="bkProduct">X</a>
+             <a href="javascript:void(0)" id="Y" name="bkProduct">Y</a>
+             <a href="javascript:void(0)" id="Z" name="bkProduct">Z</a>
+          </div>
+          <!--num_zxh end-->产品百科<span></span>
+          </h2>
+          <div class="clear"></div>
+          <div class="h_294" id="biakeProductDIV">
+          	 <ul>
+			     <li>
+					 <#list biakeProduct! as l>
+						<#if (l_index < 36)>
+							<a target="_blank" href="/detail?id=${l.id!}">
+								<#if l.title?? && l.title?length gt 3>
+				                   	${l.title?substring(0,3)}
+				            	<#else>
+				                   	${l.title}
+				                </#if>
+							</a>
+					   	</#if>
+					   	
+					   <#if l_index==8 || l_index==17 >
+			           </li><li>
+			           </#if>
+			           
+			           <#if l_index==26>
+			           </li ><li style="border-right:none;">
+			           </#if>
+					</#list>  
+			      </li>
+			</ul>
+          </div>
+           
+          <!--h_294 end-->
+     </div>
+</div>
+<!--wrapper end-->
+<div class="wrapper"> 
+<div id="footerTop" style="margin-top:10px;">
+        <ul class="menun cf">
+            <li>友情链接</li>
+        </ul>
+        <div class="clear"></div>
+        <div id="tab-content">
+            <div class="content">
+                <a href="http://www.dragon-guide.net/" target="_blank" rel="nofollow">外贸网址之家</a>
+                <a href="http://www.ev123.com/" target="_blank" rel="nofollow">易维企业服务网</a>
+                <a href="http://www.94117.net/" target="_blank" rel="nofollow">就是要仪器</a>
+                <a href="http://cn.makepolo.com/" target="_blank" rel="nofollow">企业名录</a>
+                <a href="http://www.wjw.cn/" target="_blank" rel="nofollow">全球五金网</a>
+                <a href="http://www.chinawutong.com/" target="_blank" rel="nofollow">物流网</a>
+                <a href="http://www.yellowurl.cn/" target="_blank" rel="nofollow">中国黄页</a>
+                <a href="http://carschina.com/" target="_blank" rel="nofollow">汽车中国</a>
+                <a href="http://www.taotaocar.com/" target="_blank" rel="nofollow">淘淘二手车</a>
+                <a href="http://product.cheshi.com/" target="_blank" rel="nofollow">车型大全</a>
+                <a href="http://www.ebdoor.com/" target="_blank" rel="nofollow">一比多</a>
+                <a href="http://www.chinainfoseek.com/" target="_blank" rel="nofollow">招标采购导航网</a>
+                <a href="http://www.wtojob.com/" target="_blank" rel="nofollow">世贸人才网</a>
+                <a href="http://nc.focus.cn/" target="_blank" rel="nofollow">南昌房产网</a>
+                
+                <a href="http://www.ddc.net.cn/" target="_blank" rel="nofollow">中国电动车网</a>
+                <a href="http://www.metalnews.cn/" target="_blank" rel="nofollow">中国金属新闻网</a>
+                <a href="http://www.afzhan.com/" target="_blank" rel="nofollow">安防网</a>
+                <a href="http://china.herostart.com/" target="_blank" rel="nofollow">环球贸易网</a>
+                <a href="http://www.86mai.com/" target="_blank" rel="nofollow">中国麦网</a>
+                <a href="http://www.glass.cn/" target="_blank" rel="nofollow">玻璃网</a>
+                <a href="http://www.jyyuan.com/" target="_blank" rel="nofollow">江阴信息港</a>
+                <a href="http://www.zyue.com/" target="_blank" rel="nofollow">驾校一点通</a>
+                <a href="http://bbs.yaolan.com/" target="_blank" rel="nofollow">育儿论坛</a>
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+${portalFooterUrl!}
+<!--footer end-->
+<!--二维码 start-->
+<div id="qrcode" >
+	<p>扫一扫，关注网库</p>
+    <img src="/template/images/code_icon.jpg" width="105" height="105">
+    <p>网库官方微信平台</p>
+</div>
+<!--二维码 end-->
+<!--返回顶部 start-->
+<div id="gotop">
+    <a href="javascript:backToTop()" id="backToTop"></a>
+</div>
+<!--返回顶部 end-->
+
+<!--banner start-->
+<script type="text/javascript">
+
+<!--异步获取数据-->
+$(document).ready(function() {
+
+$("a[name='bkProduct']").each(function(){
+	var initial = $(this).html();
+	if(initial=="其他"){
+		initial=0;
+	}
+	
+	$(this).hover(
+	  function () {
+	    ajaxResult("biakeProduct", "biakeProductDIV", initial);
+	  },
+	  function () {
+	  }
+	);
+});
+
+});
+
+/*banner end*/
+
+</script>
+</body>
+</html>

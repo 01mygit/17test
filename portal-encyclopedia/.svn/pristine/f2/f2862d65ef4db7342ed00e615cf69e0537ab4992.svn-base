@@ -1,0 +1,704 @@
+// JavaScript Document
+/***********************************公用*****************************/
+// JavaScript Document
+function jsCookie(){   
+    var COOKIE_LIFE ={year:31536000,month:2592000,week:604800,day:86400,hour:3600,browser:0}   
+    this.expires = 'browser';   
+    this.path = null;   
+    this.domain = null;   
+    this.get=function(fieldName){       
+  
+        var regexp = window.eval("/"+fieldName+"=([\\w%,]+)(|;)/");   
+        var result = document.cookie.match(regexp);   
+        return (result?unescape(result[1]):"");   
+    }       
+    this.set=function(fieldName,fieldValue){   
+  
+        var cookie_list;   
+        cookie_list = fieldName+"="+escape(fieldValue);           
+        cookie_list += setExpires(this.expires);   
+        cookie_list += setPath(this.path);   
+        cookie_list += setDomain(this.domain);   
+        document.cookie = cookie_list;   
+    }   
+    function setExpires(expires){   
+  
+        var tm=0;   
+          if(typeof(expires)=='string'){   
+            if(!COOKIE_LIFE[expires]) return "";       
+            tm = COOKIE_LIFE[expires]*1000;           
+        }else if(typeof(expires)=='number'){               
+            tm = expires*1000;   
+        }else{return "";}   
+        expires = ";expires="+new Date(new Date().getTime()+ tm).toUTCString();   
+        return expires;   
+    }   
+    function setPath(path){   
+        if(!path) return "";   
+        return (";path="+path);   
+    }   
+    function setDomain(domain){   
+        if(!domain) return "";   
+        return (";domain="+domain);   
+    }   
+}
+ckn = new jsCookie();   
+ckn.expires = 'hour';   
+ckn.path ="/";
+ckn.domain = "99114.com";
+$(function(){ 
+		$(".nav_r>ul>li").hover(function(){
+			var index=$(this).index();
+			$(this).addClass("click").siblings().removeClass("click");
+			$(".sNav>.sNav_list").hide().eq(index).show();	
+		})
+
+		
+		$(".hy_tit ul li").hover(function(){
+			var index=$(this).index();
+			$(this).addClass("hy_on").siblings().removeClass("hy_on");
+			$(".hy_cnt div").hide().eq(index).show();	
+		})
+		
+		$(".menu .change").click(function(){
+			if($(".menu .change").text()=="展开"){
+				$(this).css("background-position","30px -19px");
+				$(".menu dl dd:gt(5)").show();
+				$(".menu .change").text("收起")	
+			}else{
+				$(this).css("background-position","30px 0px");
+				$(".menu dl dd:gt(5)").hide();
+				$(".menu .change").text("展开")	
+			}
+	})
+
+	$(".sidebar").click(function(){
+			$(this).toggleClass("show");
+			$(".movecontent").toggle();
+	})
+	$(".fl .fl_tit").click(function(){
+			$(this).children("span").toggleClass("bg");
+			
+	})
+	$(".zx_cnt .cnt_common h3 .come").click(function(){
+			$(this).siblings(".more_list").toggle();
+	});
+
+	var sWidth = $("#idTransformView2").width(); //获取焦点图的宽度（显示面积）
+	var len = $("#idTransformView2 ul li").length; //获取焦点图个数
+	var index = 0;
+	var picTimer;	
+	//以下代码添加数字按钮和按钮后的半透明条，还有上一页、下一页两个按钮
+	var btn = "<div class='btnBg'></div><div class='btn'>";
+	for(var i=0; i < len; i++) {
+		btn += "<span>"+(i+1)+"</span>";
+	}
+	$("#idTransformView2").append(btn);
+	$("#idTransformView2 .btnBg").css("opacity",0.5);
+	//为小按钮添加鼠标滑入事件，以显示相应的内容
+	$("#idTransformView2 .btn span").mouseenter(function() {
+		index = $("#idTransformView2 .btn span").index(this);
+		showPics(index);
+	}).eq(0).trigger("mouseenter");
+	//本例为左右滚动，即所有li元素都是在同一排向左浮动，所以这里需要计算出外围ul元素的宽度
+	$("#idTransformView2 ul").css("width",sWidth * (len));	
+	//鼠标滑上焦点图时停止自动播放，滑出时开始自动播放
+	$("#idTransformView2").hover(function() {
+		clearInterval(picTimer);
+	},function() {
+		picTimer = setInterval(function() {
+			showPics(index);
+			index++;
+			if(index == len) {index = 0;}
+		},3000); //此3000代表自动播放的间隔，单位：毫秒
+	}).trigger("mouseleave");	
+	//显示图片函数，根据接收的index值显示相应的内容
+	function showPics(index) { //普通切换
+		var nowLeft = -index*sWidth; //根据index值计算ul元素的left值
+		$("#idTransformView2 ul").stop(true,false).animate({"left":nowLeft},300); //通过animate()调整ul元素滚动到计算出的position
+		$("#idTransformView2 .btn span").removeClass("on").eq(index).addClass("on"); //为当前的按钮切换到选中的效果
+		//$("#idTransformView2 .btn span").stop(true,false).animate({"opacity":"0.4"},300).eq(index).stop(true,false).animate({"opacity":"1"},300); //为当前的按钮切换到选中的效果
+	}
+	
+})
+try{
+	eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('2 E={J:\'E\',Z:{},1E:7(){4(x.1l&&!x.1l[6.J]){x.1l.23(6.J,\'24:25-26-27:3\')}4(1F.11){1F.11(\'28\',7(){E=29})}},1G:7(){2 a=x.1m(\'8\');x.1H.1b.1n(a,x.1H.1b.1b);2 b=a.1o;b.1c(6.J+\'\\\\:*\',\'{12:2a(#1I#2b)}\');b.1c(6.J+\'\\\\:9\',\'Q:1p;\');b.1c(\'1J.\'+6.J+\'1K\',\'12:y; 1q:y; Q:1p; z-2c:-1; 1d:-1r; 1L:1M;\');6.1o=b},1N:7(){2 a=13.2d;4(13.1e.K(\'2e\')!=-1||13.1e.K(\'1q\')!=-1){E.1f(a)}4(13.1e==\'8.1s\'){2 b=(a.F.1s==\'y\')?\'y\':\'2f\';G(2 v M a.3){a.3[v].9.8.1s=b}}4(13.1e.K(\'14\')!=-1){E.1t(a)}},1t:7(a){4(a.F.14.K(\'2g\')!=-1){2 b=a.F.14;b=1u(b.2h(b.1v(\'=\')+1,b.1v(\')\')),10)/2i;a.3.N.9.8.14=a.F.14;a.3.C.I.2j=b}},15:7(a){2k(7(){E.1f(a)},1)},2l:7(a){2 b=a.1O(\',\');G(2 i=0;i<b.2m;i++){6.1o.1c(b[i],\'12:2n(E.1P(6))\')}},1f:7(a){a.S.1Q=\'\';6.1R(a);6.16(a);6.1t(a);4(a.O){6.1S(a)}},1T:7(b){2 c=6;2 d={2o:\'16\',2p:\'16\'};4(b.17==\'A\'){2 e={2q:\'15\',2r:\'15\',2s:\'15\',2t:\'15\'};G(2 a M e){d[a]=e[a]}}G(2 h M d){b.11(\'1w\'+h,7(){c[d[h]](b)})}b.11(\'2u\',6.1N)},1x:7(a){a.8.2v=1;4(a.F.Q==\'2w\'){a.8.Q=\'2x\'}},1S:7(a){2 b={\'2y\':P,\'2z\':P,\'2A\':P};G(2 s M b){a.3.N.9.8[s]=a.F[s]}},1R:7(a){4(!a.F){1g}U{2 b=a.F}G(2 v M a.3){a.3[v].9.8.1U=b.1U}a.S.18=\'\';a.S.19=\'\';2 c=(b.18==\'1V\');2 d=P;4(b.19!=\'y\'||a.O){4(!a.O){a.D=b.19;a.D=a.D.2B(5,a.D.1v(\'")\')-5)}U{a.D=a.1h}2 e=6;4(!e.Z[a.D]){2 f=x.1m(\'1J\');e.Z[a.D]=f;f.2C=e.J+\'1K\';f.S.1Q=\'12:y; Q:1p; 1y:-1r; 1d:-1r; 1q:y;\';f.11(\'2D\',7(){6.1i=6.2E;6.1j=6.2F;e.16(a)});f.1h=a.D;f.1W(\'1i\');f.1W(\'1j\');x.1X.1n(f,x.1X.1b)}a.3.C.I.1h=a.D;d=V}a.3.C.I.1w=!d;a.3.C.I.N=\'y\';a.3.N.9.8.18=b.18;a.S.19=\'y\';a.S.18=\'1V\'},16:7(e){2 f=e.F;2 g={\'W\':e.2G+1,\'H\':e.2H+1,\'w\':6.Z[e.D].1i,\'h\':6.Z[e.D].1j,\'L\':e.2I,\'T\':e.2J,\'1k\':e.2K,\'1z\':e.2L};2 i=(g.L+g.1k==1)?1:0;2 j=7(a,l,t,w,h,o){a.2M=w+\',\'+h;a.2N=o+\',\'+o;a.2O=\'2P,1Y\'+w+\',1Y\'+w+\',\'+h+\'2Q,\'+h+\' 2R\';a.8.1i=w+\'u\';a.8.1j=h+\'u\';a.8.1y=l+\'u\';a.8.1d=t+\'u\'};j(e.3.N.9,(g.L+(e.O?0:g.1k)),(g.T+(e.O?0:g.1z)),(g.W-1),(g.H-1),0);j(e.3.C.9,(g.L+g.1k),(g.T+g.1z),(g.W),(g.H),1);2 k={\'X\':0,\'Y\':0};2 m=7(a,b){2 c=P;2S(b){1a\'1y\':1a\'1d\':k[a]=0;1A;1a\'2T\':k[a]=.5;1A;1a\'2U\':1a\'2V\':k[a]=1;1A;1I:4(b.K(\'%\')!=-1){k[a]=1u(b)*.2W}U{c=V}}2 d=(a==\'X\');k[a]=2X.2Y(c?((g[d?\'W\':\'H\']*k[a])-(g[d?\'w\':\'h\']*k[a])):1u(b));4(k[a]==0){k[a]++}};G(2 b M k){m(b,f[\'2Z\'+b])}e.3.C.I.Q=(k.X/g.W)+\',\'+(k.Y/g.H);2 n=f.30;2 p={\'T\':1,\'R\':g.W+i,\'B\':g.H,\'L\':1+i};2 q={\'X\':{\'1B\':\'L\',\'1C\':\'R\',\'d\':\'W\'},\'Y\':{\'1B\':\'T\',\'1C\':\'B\',\'d\':\'H\'}};4(n!=\'1D\'){2 c={\'T\':(k.Y),\'R\':(k.X+g.w),\'B\':(k.Y+g.h),\'L\':(k.X)};4(n.K(\'1D-\')!=-1){2 v=n.1O(\'1D-\')[1].31();c[q[v].1B]=1;c[q[v].1C]=g[q[v].d]}4(c.B>g.H){c.B=g.H}e.3.C.9.8.1Z=\'20(\'+c.T+\'u \'+(c.R+i)+\'u \'+c.B+\'u \'+(c.L+i)+\'u)\'}U{e.3.C.9.8.1Z=\'20(\'+p.T+\'u \'+p.R+\'u \'+p.B+\'u \'+p.L+\'u)\'}},1P:7(a){a.8.12=\'y\';4(a.17==\'32\'||a.17==\'33\'||a.17==\'34\'){1g}a.O=V;4(a.17==\'35\'){4(a.1h.21().K(/\\.22$/)!=-1){a.O=P;a.8.1L=\'1M\'}U{1g}}U 4(a.F.19.21().K(\'.22\')==-1){1g}2 b=E;a.3={N:{},C:{}};2 c={9:{},I:{}};G(2 r M a.3){G(2 e M c){2 d=b.J+\':\'+e;a.3[r][e]=x.1m(d)}a.3[r].9.36=V;a.3[r].9.37(a.3[r].I);a.38.1n(a.3[r].9,a)}a.3.C.9.39=\'y\';a.3.C.I.3a=\'3b\';a.3.N.I.1w=V;b.1T(a);b.1x(a);b.1x(a.3c);b.1f(a)}};3d{x.3e("3f",V,P)}3g(r){}E.1E();E.1G();',62,203,'||var|vml|if||this|function|style|shape|||||||||||||||||||||px|||document|none||||image|vmlBg|EvPNG|currentStyle|for||fill|ns|search||in|color|isImg|true|position||runtimeStyle||else|false||||imgSize||attachEvent|behavior|event|filter|handlePseudoHover|vmlOffsets|nodeName|backgroundColor|backgroundImage|case|firstChild|addRule|top|propertyName|applyVML|return|src|width|height|bLW|namespaces|createElement|insertBefore|styleSheet|absolute|border|10000px|display|vmlOpacity|parseInt|lastIndexOf|on|giveLayout|left|bTW|break|b1|b2|repeat|createVmlNameSpace|window|createVmlStyleSheet|documentElement|default|img|_sizeFinder|visibility|hidden|readPropertyChange|split|fixPng|cssText|vmlFill|copyImageBorders|attachHandlers|zIndex|transparent|removeAttribute|body|0l|clip|rect|toLowerCase|png|add|urn|schemas|microsoft|com|onbeforeunload|null|url|VML|index|srcElement|background|block|lpha|substring|100|opacity|setTimeout|fix|length|expression|resize|move|mouseleave|mouseenter|focus|blur|onpropertychange|zoom|static|relative|borderStyle|borderWidth|borderColor|substr|className|onload|offsetWidth|offsetHeight|clientWidth|clientHeight|offsetLeft|offsetTop|clientLeft|clientTop|coordsize|coordorigin|path|m0|l0|xe|switch|center|right|bottom|01|Math|ceil|backgroundPosition|backgroundRepeat|toUpperCase|BODY|TD|TR|IMG|stroked|appendChild|parentNode|fillcolor|type|tile|offsetParent|try|execCommand|BackgroundImageCache|catch'.split('|'),0,{}))
+	EvPNG.fix('.blue_bj img, .green_bj img, .yellow_bj img, .infor_po, .intro_em1,.position,.login a,.box07 h3 img,.pad5 li img,.login a.pen,.cg_tj h2,.cy_title span,.box ul li img,.next,.prev,.createn img,.img_span');  //EvPNG.fix('��͸��PNGͼƬ�ı�ǩ'); �����ǩ֮����Ӣ�Ķ��Ÿ�����
+}catch(e){}
+/*文字滚动  start*/
+function AutoScroll(obj){
+        $(obj).find("ul:first").animate({
+                marginTop:"-23px"
+        },500,function(){
+                $(this).css({marginTop:"0px"}).find("li:first").appendTo(this);
+        });
+}
+$(document).ready(function(){
+setInterval('AutoScroll("#scrollDiv")',3000)
+});
+/*文字滚动 end*/
+/*登陆提示框 关闭*/
+function hideloginTs(){
+	$.cookie('loginTsHasCancelOnline', 'true', {expires: 1, path: '/', domain: '99114.com', secure: false});
+	$.cookie('loginTsHasCancel', 'true', {expires: 1, path: '/', domain: '99114.cn', secure: false});
+	$("#loginTs").fadeOut();
+}
+$(function(){
+	//head滑过出现下拉框
+	$(".topMuneList").hover(function(){
+		$(this).addClass("snMenuHover");
+		$(this).children(".show1").show();
+	},function(){
+		
+		$(this).removeClass("snMenuHover");
+		$(this).children(".show1").hide();
+	})	
+	
+	$("#cartTitle").hover(function(){
+		$("#products").show();
+	},function(){
+		$("#products").hide();
+	})	
+	$("#products").hover(function(){
+		$("#products").show();
+	},function(){
+		$("#products").hide();
+	})	
+	//我的采购清单加减
+	$(".btn_jian").click(function() {
+        var i = parseInt($(this).next(".text_input").val());
+        var min = parseInt($(this).next(".text_input").attr("min"));
+        if (i > min) {
+            i--;
+            $(this).next(".text_input").val(i);
+        }
+    })
+    $(".btn_jia").click(function() {
+        var i = parseInt($(this).prev(".text_input").val());
+        var max = parseInt($(this).prev(".text_input").attr("max"));
+        if (i < max) {
+            i++;
+            $(this).prev(".text_input").val(i);
+        }
+    })
+	//我的采购清单加减里的删除
+	$(".end").click(function(){
+		$(this).parent(".shoppingListCon").remove();
+	});
+	
+	
+	/*搜索*/
+	$(".searchTab ul li").each(function(){
+		$(this).click(function(){
+			$(".searchTab ul li").removeClass("on")
+			$(this).addClass("on");
+			var txtSearch=$('#txtSearch').val();
+			var indexOfTxtSearch=txtSearch.indexOf('请输入');
+			if($(".searchTab ul li").eq(0).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入供应商名称");}
+			else{
+				if($(".searchTab ul li").eq(1).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入求购名称");}
+				else{
+					if($(".searchTab ul li").eq(2).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入企业名称");}
+					else{
+						if($(".searchTab ul li").eq(3).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入招商名称");}
+						else{
+							if($(".searchTab ul li").eq(4).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入资讯名称");}
+							else{
+								if($(".searchTab ul li").eq(5).attr("class")=="on"&&indexOfTxtSearch>=0){$(".searchCon input").eq(0).attr("value","请输入百科名称");}
+							}
+						}
+					}
+				}
+			}
+			$('.searchTxt').each(function(){  
+				var txt = $(this).val();  
+				var txtIndexOf=txt.indexOf('请输入');
+				$(this).focus(function(){  
+					if(txt === $(this).val()&&txtIndexOf>=0) $(this).val("");  
+					}).blur(function(){  
+					if($(this).val() == "") $(this).val(txt);  
+				});  
+			}) 
+		})
+	
+	}) 	
+
+	/*搜索*
+	/*zminput换文字颜色*/
+	function inputTipText() {
+		$("[class*=grayTips]") // 所有样式名中含有grayTips的input
+		.each(function() {
+			var _this = $(this);
+			
+		   if($.trim(_this.val()) == '' || _this.val() == '请输入关键字'){
+			   _this.css('color', '#888');
+		   }else{
+			   _this.css('color', '#000');
+		   }
+			
+			_this.focus(function() {
+					if (_this.val() =='请输入关键字') {
+						_this.val('').css("color", "#000");
+				 }})
+				.blur(function() {
+				if (!_this.val() || $.trim(_this.val()) == "" || _this.val() =='请输入关键字') {
+					_this.val("请输入关键字").css("color", "#888");
+				}
+			}).keydown(function() {
+				_this.css({
+					"color" : "#000"
+				})
+			})
+		})
+	} 
+	
+	$(function(){     
+		inputTipText();  //直接调用就OK了
+		return false;     
+	})
+});
+//返回顶部
+(function($){
+	$(window).scroll(function(){
+		var s_w = window.screen.width;
+		var s_h = window.screen.height;
+		var s_top = parseInt($(window).scrollTop()+8);
+		if(s_w >=1280 && s_h >= 450 && s_top>500){
+			$("#qrcode").fadeIn("normal");
+			$("#gotop").fadeIn("normal");	
+		}else{
+			$("#qrcode").fadeOut("normal");
+			$("#gotop").fadeOut("normal");	
+		}
+		})
+$("#back").bind("click",function(){$("html, body").animate({scrollTop:0},100);})})(jQuery)
+function backToTop(){
+	$("html, body").animate({ scrollTop: 0 }, 120);
+}
+
+
+
+
+/***************************产业基地*********************************/
+$(function(){
+	//资讯信息tab切换
+	$(".jd_tab1 li").each(function(index){      
+		$(this).hover(function(){			 
+			$(this).addClass("licur").siblings().removeClass("licur");
+			$(".t-newTabCon").eq(index).show().siblings(".t-newTabCon").hide();
+		});					
+	});
+	
+	//最热产品tab切换
+	$(".hot_li li").each(function(index){      
+		$(this).hover(function(){			 
+			$(this).addClass("lih").siblings().removeClass("lih");
+			$(".t-newTabUl").eq(index).show().siblings(".t-newTabUl").hide();
+		});					
+	});
+	
+	
+	//li滑过加边框
+	$(".t-newTabUl li").hover(function(){
+		$(this).addClass("li_hover");
+	},function(){
+		$(this).removeClass("li_hover");
+	});
+});
+
+
+
+/*********************************list*****************************************/
+$(function(){
+	/*已选类目属性点击删除*/
+	$(".s-changed a i").click(function(){
+		$(this).parent("a").remove();
+	});
+	/*点击多选*/
+	$(".s-multiple").click(function(){
+		$(this).parent().siblings().find(".add_more").show();
+		$(this).parent().siblings().find("input").show();
+		$(this).parent().siblings(".s-l-choise").addClass("w658");
+		$(this).parent(".s-options").hide();
+		$(this).parent().parent().parent().find(".add_btn").show();
+	});
+	/*点击更多*/
+	$(".s-more").click(function(){
+		if($(this).parent().siblings().find(".add_more").is(":visible")){
+			$(this).parent().siblings().find(".add_more").hide();
+			$(this).parent().siblings(".s-l-choise").removeClass("wmore");
+			$(this).text("更多")
+			$(this).addClass("more_icon");
+			$(this).removeClass("s-sq");
+			
+		}else{
+			$(this).parent().siblings(".s-l-choise").addClass("wmore")
+			$(this).parent().siblings().find(".add_more").show();
+			
+			$(this).text("收起")
+			$(this).removeClass("more_icon");
+			$(this).addClass("s-sq");
+			};
+			
+	});
+	
+	
+	/*所有采购类型*/
+	$(".select").click(function(event){
+		$(this).toggleClass("add_position").find(".slt-option").toggle();
+		event.stopPropagation();		
+	})
+	$(".slt-option ul li").click(function(){
+		$(this).parent().parent().parent().find("input").val($(this).find("a").text())
+	})
+	/*发货地*/
+	$(".add_select2").click(function(event){
+		$(this).toggleClass("add_position").find(".slt-option2").toggle();
+		event.stopPropagation();	
+	})
+	$.each($(".slt-option2 ul.area li"),function(){
+	  $(this).click(function(){
+		  $(".slt_input").val($(this).text());
+		});
+	});
+	
+	$(".slt-option2 ul li").hover(function(){
+		$(this).css("z-index","2");
+		$(this).addClass("li_hover");
+		$(this).find("div").show();
+		$(".list_po").find(".hover_pop").addClass("hover_popr");
+	},function(){
+		$(this).removeClass("li_hover");
+		$(this).css("z-index","0");
+		$(this).find("div").hide();
+	});
+	
+	
+	$(document).click(function(){
+		$(".slt-option2").hide();
+		$(".slt-option").hide();
+	});
+	
+	
+	//发布时间上下箭头
+	$(".m_downicon").click(function(){
+		$(this).children("em").addClass("m_downicon2");
+		$(this).siblings().children("em").addClass("m_upicon1");
+		$(this).siblings().children("em").removeClass("m_upicon2");
+	});
+	$(".m_upicon").click(function(){
+		$(this).children("em").addClass("m_upicon2");
+		$(this).siblings().children("em").addClass("m_downicon1");
+		$(this).siblings().children("em").removeClass("m_downicon2");
+	});
+});
+
+
+
+
+/*********************************资讯********************************/
+$(function(){
+	//登录
+	$("#hy_login").click(function(){
+		$(".login").hide();
+		$(".login_over").show();
+	});
+	//更多滑过
+	$(".more_hover").hover(function(){
+		$(this).children(".more_list").show();
+		$(this).children(".gray").css("color","#ff6622");
+	},function(){
+		$(this).children(".more_list").hide();
+		$(this).children(".gray").css("color","#a8a8a8");
+	});
+});
+
+/*************************************采购************************************/
+$(function(){
+	//tab切换
+	$(".pro_lotab li").each(function(index){
+		$(this).hover(function(){
+			$(this).addClass("lo_tab").siblings().removeClass("lo_tab");
+			$(".s-changeCon").eq(index).show().siblings(".s-changeCon").hide();
+		});
+	});
+});
+ 
+/*************************************百科************************************/
+$(function(){
+	//tab切换
+	 $(".num_zxh a").each(function(index){
+		$(this).hover(function(){
+			$(this).addClass("cur").siblings().removeClass("cur");
+			$(".h_294").eq(index).show().siblings(".h_294").hide();
+		});
+	});
+});
+
+/*************************************库存************************************/
+$(function(){
+	$(".industry ul li").hover(function(){
+		$(".industry ul li").removeClass("industry_libj");
+		$(this).addClass("industry_libj");
+	});
+});
+
+
+function ajaxResult(url, div, initial){
+	
+	$.ajax( {	async : false,	
+				type : "POST",	
+				dataType : "html",	
+				url : url,	
+				data: "initial="+initial,
+				success : function(data) {	
+					$('#'+div).html(data);
+					
+			 }
+		});
+}
+
+function ajaxDiv(url, div){
+	if(document.getElementById(div).innerHTML == ''){//注意：这里页面如果有空格的话也不会去请求
+		$.post(url,function(data) {
+			$('#'+div).html(data);
+	    });
+	}
+}
+function toGo(objURL){
+    window.parent.location.href=objURL;
+  }
+  
+  $(function(){
+//	 var cookieText = $.cookie('searchTxt');
+//	 var cookieURL = $.cookie('searchURL');
+//	 var tabSelectType = false;
+//	 $("#searchTabUl li").removeClass("on");
+//	 $("#searchTabUl li").each(function(){
+//        var showURL = $(this).attr("title");
+//        if(cookieURL == showURL){
+//           $(this).addClass("on");
+//           tabSelectType = true;
+//           $("#txtSearch").val(cookieText);
+//        }  
+//        
+//     })
+//     if(!tabSelectType){
+//       $("#searchTabUl li:first").addClass("on");
+//     }
+//	 if(cookieURL != null){
+//		 $("#hidSearch").val(cookieURL);
+//	 }
+  });
+//搜索按钮回车事件
+  $(document).ready(function(){
+  	$(document).keypress(function(e){
+  		var curKey = e.which;
+  		if(curKey == 13){
+  			btnSearch();
+  			return false;
+  		}
+  		return true;
+  	});
+  }); 
+//已经不用
+function Query() {
+//	var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异  
+//     if(event.keyCode == 13) { 
+//    	 btnSearch();
+//     }   
+//     return;  
+} 
+// 搜索TAB切换事件
+function setSearchTab(searchTab) {
+	$("#hidSearch").val(searchTab);
+	var searchTxt = $.trim($("#txtSearch").val());
+	if (searchTxt == null || searchTxt.length == 0 || searchTxt == "请输入关键字"|| searchTxt == "请输入供应商名称"|| searchTxt == "请输入求购名称"|| searchTxt == "请输入企业名称"|| searchTxt == "请输入招商名称"|| searchTxt == "请输入资讯名称"|| searchTxt == "请输入百科名称") {
+		return;
+	} else {
+		btnSearch();
+	}
+}
+//搜索按钮事件
+function btnSearch() {
+	var searchTxt = $.trim($("#txtSearch").val());
+	if (searchTxt == null || searchTxt.length == 0 || searchTxt == "请输入关键字"|| searchTxt == "请输入供应商名称"|| searchTxt == "请输入求购名称"|| searchTxt == "请输入企业名称"|| searchTxt == "请输入招商名称"|| searchTxt == "请输入资讯名称"|| searchTxt == "请输入百科名称") {
+		alert("请输入关键字");
+	} else {
+		var url =  $("#hidSearch").val() + "/listing/" + searchTxt;
+		try{
+			 //$.cookie('searchTxt', searchTxt,{expires: 1});
+			 //$.cookie('searchURL', $("#hidSearch").val(),{expires: 1});
+			 //window.parent.location.href=url;
+			var href=window.location.href;
+			if(href.indexOf("list")>0){
+				window.location.href=url;
+			}else{
+				window.open(url);
+			}
+		}catch(e){
+			;
+		}
+	}
+}
+
+/*cookie 插件*/
+/*
+$.cookie('the_cookie'); // 获得cookie
+$.cookie('the_cookie', 'the_value'); // 设置cookie
+$.cookie('the_cookie', 'the_value', { expires: 7 }); //设置带时间的cookie
+$.cookie('the_cookie', '', { expires: -1 }); // 删除
+$.cookie('the_cookie', null); // 删除 cookie
+$.cookie('the_cookie', 'the_value', {expires: 7, path: '/', domain: 'jquery.com', secure: true});//新建一个cookie 包括有效期 路径 域名等
+ * */
+jQuery.cookie = function(name, value, options) {
+    if (typeof value != 'undefined') {
+              options = options || {};
+              if (value === null) {
+                        value = '';
+                        options = $.extend({}, options);
+                        options.expires = -1;
+              }
+              var expires = '';
+              if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+                        var date;
+                        if (typeof options.expires == 'number') {
+                                  date = new Date();
+                                  date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+                        } else {
+                                  date = options.expires;
+                        }
+                        expires = '; expires=' + date.toUTCString();
+              }
+              var path = options.path ? '; path=' + (options.path) : '';
+              var domain = options.domain ? '; domain=' + (options.domain) : '';
+              var secure = options.secure ? '; secure' : '';
+              document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+    } else {
+              var cookieValue = null;
+              if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                                  var cookie = jQuery.trim(cookies[i]);
+                                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                            break;
+                                  }
+                        }
+              }
+              return cookieValue;
+    }
+};
+$(function(){
+	//searchCartProduct();
+})
+
+function searchCartProduct(){
+	$.ajax({	
+		type: "post",
+		url:"/cart/list",
+		dataType:"html",
+		success: function(data){
+			$("#products").html(data);
+			
+		}
+	});
+}
+
+//对加减增量修改商品数量
+function updateProductNum(productId,type){
+	var parm= /^[0-9]*[0-9][0-9]*$/;
+	var increment = 0;
+	var updateCount = 0;
+	var productNum = $("#productNum_"+productId).val();
+	var num = $("#num_"+productId).val();
+	var max = parseInt($("#productNum_"+productId).attr("max"));
+	var min = parseInt($("#productNum_"+productId).attr("min"));
+	
+	if(!parm.test(productNum)){
+		alert("请输入正整数");
+		$("#productNum_"+productId).val($("#num_"+productId).val());
+		return;
+	}
+
+	if(type == 1){	//直接修改数量
+		updateCount = $("#productNum_"+productId).val();
+		if(updateCount == 0){
+			alert("商品数量不能为0！");
+			$("#productNum_"+productId).val($("#num_"+productId).val());
+			return;
+		}else if(updateCount < min){
+			alert("商品数量不能小于最小购买数量！");
+			$("#productNum_"+productId).val($("#num_"+productId).val());
+			return;
+		}else if(updateCount > max){
+			alert("商品数量不能大于最大购买数量！");
+			$("#productNum_"+productId).val($("#num_"+productId).val());
+			return;
+		}
+	}else if(type == 2){	//增加数量数量
+		var addNum = $("#productNum_"+productId).val();
+		if(parseInt(addNum) + 1 > max){
+			alert("商品数量不能大于最大购买数量！");
+			$("#productNum_"+productId).val($("#num_"+productId).val());
+			return;
+		}
+		$("#productNum_"+productId).val(parseInt(addNum) + 1);
+		increment = 1;
+	}else if(type == 3){	//减掉商品数量
+		var subNum = $("#productNum_"+productId).val();
+		if(subNum == 1){
+			alert("商品数量不能为0！");
+			return;
+		}else if(parseInt(subNum) - 1 < min){
+			alert("商品数量不能小于最小购买数量！");
+			$("#productNum_"+productId).val($("#num_"+productId).val());
+			return;
+		}
+		$("#productNum_"+productId).val(parseInt(subNum) - 1);
+		increment = -1;
+	}
+	
+	if($("#productNum_"+productId).val() == $("#num_"+productId).val()){
+		return;
+	}
+
+	$.ajax({	
+		type: "post",
+		url:"/cart/update",
+		data:{"id":productId,"increment":increment,"updateCount":updateCount},
+		dataType:"json",
+		success: function(data){
+			if(data.status == -1){	//库存不足
+				$("#productNum_"+productId).val($("#num_"+productId).val());
+				alert("库存不足");
+			}else if(data.status == 0){	//修改失败
+				$("#productNum_"+productId).val($("#num_"+productId).val());
+				alert("修改失败");
+			}else if(data.status == 1){	//修改成功
+				$("#num_"+productId).val($("#productNum_"+productId).val());
+			}else if(data.status == -2){//商品小于最小订货量
+				$("#productNum_"+productId).val($("#num_"+productId).val());
+				alert("商品小于最小订货量");	
+			}
+		}
+	});
+}
+
+//删除购物车商品
+function delProduct(productId){
+	$.ajax({	
+		type: "post",
+		async:false,
+		url:"/cart/delete",
+		data:{"id":productId},
+		dataType:"json",
+		success: function(data){
+			searchCartProduct();
+			if(data.status == 0){
+				//$("#products").children().remove("#"+productId);
+				
+			}
+		}
+	});
+}

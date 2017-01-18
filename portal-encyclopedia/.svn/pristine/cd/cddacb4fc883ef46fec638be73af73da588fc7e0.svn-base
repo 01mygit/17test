@@ -1,0 +1,10 @@
+package com.wangku.was.encyclopedia.constant;
+
+public class ArticleCode {
+	
+	public static final String ADVERTISING = "101136"; //资讯展会
+	
+	public static final String THE_FOCUS = "101101"; // 热点资讯（行业焦点）
+	
+	public static final String INDUSTRY = "101102"; //行业资讯
+}

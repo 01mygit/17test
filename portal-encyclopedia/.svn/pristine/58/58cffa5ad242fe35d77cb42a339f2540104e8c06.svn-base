@@ -1,0 +1,24 @@
+ <ul>
+     <li>
+       <#list biakeProduct! as l>
+			<#if (l_index < 36)>
+				<a href="/${l.id!}.html" target="_blank">
+					<#if l.title?? && l.title?length gt 3>
+	                   	${l.title?substring(0,3)}
+	            	<#else>
+	                   	${l.title}
+	                </#if>
+				</a>
+		   	</#if>
+		   	
+		   	<#if l_index==8 || l_index==17 >
+           </li><li>
+           </#if>
+           
+           	<#if l_index==26>
+           </li ><li style="border-right:none;">
+           </#if>
+		</#list>  
+		
+      </li>
+</ul>

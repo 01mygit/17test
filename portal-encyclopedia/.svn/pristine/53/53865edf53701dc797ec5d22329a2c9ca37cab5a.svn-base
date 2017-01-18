@@ -1,0 +1,98 @@
+$(function(){
+	LoadCatalogue();
+});
+//截取字符串
+function subLen(s,t){
+    if(s.length>t){
+        return s.substr(0,t)+'..';
+    }else{
+        return s;
+    }
+}
+//百科详细目录
+function LoadCatalogue(){
+    //获取一级标题
+    var $h3=$(".canshu>h3").size();
+    if($h3>0){
+        var html='<div class="menu"><dl><dt class="bkh">目录</dt>';
+        var html2='<div class="side_up"></div><div class="side_title">'+$("#ltName").text()+'</div><div class="side_panel" style="height:340px;"><div id="RollDiv" style="position:absolute;">';
+        $(".canshu>h3").each(function(i){
+            if($.trim($(this).text())==""){
+                return true;
+            }
+            $(this).attr("id","anchor"+i);
+            
+            html2+='<div class="fl"><div class="fl_tit"><a href="#anchor'+i+'">'+subLen($(this).text(),9)+'</a></div>';
+            
+            
+            html+='<dd ';
+            if(i<6){
+                html+='style="display:block;"';
+            }
+            html+='><a href="#anchor'+i+'">'+$(this).text()+'</a>';
+            var $ul=$(this).parent().find("p>b");
+            if($ul.size()>0){
+                html+='<ul style="display:none;">';
+                
+                html2+='<div class="fl_cnt"><ul>';
+                $ul.each(function(j){
+                    $(this).attr("id","secondAnchor"+i+"_"+j);
+                    html+='<li><a href="#secondAnchor'+i+"_"+j+'">'+$(this).text()+'</a></li>';
+                    html2+='<li><a href="#secondAnchor'+i+"_"+j+'">'+subLen($(this).text(),7)+'</a></li>';
+                });
+                html+='</ul>';
+                
+                html2+='</ul></div>';
+            }
+            
+            html2+='</div>';
+            
+            html+='</dd>';
+        });
+        html+='</dl>';
+        if($h3>6){
+            html+='<div class="changeBtn"><span class="change">展开</span></div>';
+            $(".menu .change").live('click',function(){
+		        if($(this).text()=="展开"){
+			        $(this).css("background-position","30px -456px");
+			        $(".menu>dl>dd>ul").show();
+			        $(".menu dl dd:gt(5)").show();
+    				
+			        $(this).text("收起")	
+		        }else{
+			        $(this).css("background-position","30px -436px");
+			        $(".menu>dl>dd>ul").hide();
+			        $(".menu dl dd:gt(5)").hide();
+			        $(this).text("展开");	
+		        }
+            });
+        }
+        html+='</div>';
+        html2+='</div></div><div class="side_bottom"></div>';
+        if($(".menuDiv").size()>1){
+            $(".menuDiv").html(html);
+        }else{
+            $(".canshu").eq(0).before("<div class='menuDiv'>"+html+"</div>");
+        }
+        $(".menuDiv").height($(".menu").height());
+        $(".movecontent").html(html2);
+        
+        
+        //右边目录加上上下滚动的方法
+        //向上
+        $(".side_up").mousedown(function(){
+              CatalogueMarquee({"direction":"t"});
+        }).mouseup(function(){
+            clearTimeout(CatalogueMarquee_setTimeout);
+        });
+        //向下
+        $(".side_bottom").mousedown(function(){
+            CatalogueMarquee({"direction":"d"});
+        }).mouseup(function(){
+            clearTimeout(CatalogueMarquee_setTimeout);
+        });
+    }else{
+        $(".movecontent").remove();
+    }
+    
+}

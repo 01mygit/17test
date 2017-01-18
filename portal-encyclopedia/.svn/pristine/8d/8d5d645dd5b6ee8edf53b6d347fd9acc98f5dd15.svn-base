@@ -1,0 +1,4 @@
+#sso callback url
+#callbackparam=http://plw.wangku.com/categorynetwork/
+#callbackparam=http://wk-member.99114.com:8080/was-member/login/toLogin
+callbackparam=http://plw.wangku.com/categorynetwork/

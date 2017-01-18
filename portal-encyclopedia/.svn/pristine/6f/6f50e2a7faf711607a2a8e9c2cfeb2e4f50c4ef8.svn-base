@@ -1,0 +1,194 @@
+package com.wangku.was.encyclopedia.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.wangku.was.categorynet.common.constant.SiteInfo;
+import com.wangku.was.categorynet.common.member.dubbo.IMemberService;
+import com.wangku.was.categorynet.common.utils.HTMLContents;
+import com.wangku.was.categorynet.common.utils.JsonUtil;
+import com.wangku.was.categorynet.common.utils.PraseUtil;
+import com.wangku.was.categorynet.common.utils.PropertyPlaceholderConfigurerExt;
+import com.wangku.was.encyclopedia.enums.CacheEnum;
+import com.wangku.was.encyclopedia.utils.EnvironmentContext;
+import com.wangku.was.images.dubbo.IRDubboImgImageService;
+import com.wangku.was.system.admin.dubbo.service.IRDubboSiteService;
+import com.wangku.wjf.common.cache.dao.CacheManagerDao;
+import com.wangku.wjf.common.log.LogMgr;
+import com.wangku.wjf.common.web.BaseController;
+/**
+ * @Title: SiteBaseController.java 
+ * @Description: TODO  
+ * @author 刘文杰  
+ * @Modified 刘文杰        
+ * @date 2013-9-26 上午9:39:32   
+ * @version V1.0     
+*/
+public class SiteBaseController extends BaseController {
+	@Autowired
+	private IRDubboSiteService rDubboSiteService;
+	@Autowired
+	private IRDubboImgImageService rDubboImgImageService;
+	@Autowired
+	private IMemberService memberService;
+	@Autowired
+	private CacheManagerDao cacheManagerDao;
+	/** 
+	 * getSiteDetail(得到站点相关信息) 
+	 * @return  
+	 * Map<Object,Object> 
+	 * @exception  
+	 * @since  1.0
+	*/
+	@SuppressWarnings("unchecked")
+	public Map<Object, Object> getSiteDetail() {
+		//通过域名得到站点ID
+		String requestHost=request.getScheme() + "://" + request.getServerName();
+		Map<Object, Object> siteDetail=null;
+		try {
+			String jsonSite= rDubboSiteService.getSiteByDomain(requestHost);
+			List<Map<Object, Object>>  siteList = JsonUtil.parseDubboJsonToList(jsonSite); 
+			if(siteList!=null && siteList.size()>0){
+				siteDetail = siteList.get(0);
+				if(null != siteDetail){
+					int siteid=PraseUtil.praseInt(siteDetail.get("id"));
+					if(siteid != SiteInfo.SITE_ID){
+						SiteInfo.SITE_ID=siteid;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LogMgr.writeErrorLog(e);
+		}
+		if (null == siteDetail) {
+			siteDetail = new HashMap<Object, Object>();
+		}
+		//缓存一些外部URL
+		Object cache=null;
+		String cacheKey = CacheEnum.SITEID_PORTAL.toString();
+		cacheKey = cacheKey.replace("SITEID", String.valueOf(SiteInfo.SITE_ID));
+		cacheKey = cacheKey.replace("PORTAL", "CNCYCLOPEDIA_NEW");
+		cache=cacheManagerDao.get(cacheKey);
+		if(null==cache){
+			siteDetail.put("supplyUrl", PropertyPlaceholderConfigurerExt.getContextProperty("SUPPLY_URL"));
+			siteDetail.put("corporationUrl",PropertyPlaceholderConfigurerExt.getContextProperty("CORPORATION_URL"));
+			siteDetail.put("URLMAP", PropertyPlaceholderConfigurerExt.getContextProperty());
+			//HTMLContents.init(PropertyPlaceholderConfigurerExt.getContextProperty("ENVIRONMENT").toString(),PropertyPlaceholderConfigurerExt.getContextProperty("NAV").toString());
+			EnvironmentContext.init();
+			siteDetail.put("portalTopUrl",  HTMLContents.getHEAD_HTML());
+			siteDetail.put("portalFooterUrl",  HTMLContents.getBOTTOM_HTML());
+			
+			cacheManagerDao.set(cacheKey, siteDetail);
+
+		}else{
+			siteDetail=(Map<Object, Object>) cache;
+		}
+		// 读取LOGO
+		if (null != siteDetail) {
+			Object logo = siteDetail.get("logo");
+			if (null != logo) {
+				List<String> picList = rDubboImgImageService.parseImgUrl(logo.toString());
+				if (null != picList && picList.size() > 0) {
+					siteDetail.put("logo", picList.get(0)); // logo
+				}
+			}
+		}
+		siteDetail.put("requestURL", request.getRequestURL());//得到当前请求路径
+		
+		return siteDetail;
+	}
+
+	private HttpServletRequest request;
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+	@Resource
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+	public  Map<Object, Object> loginUser(){
+		
+	 	Map<Object, Object> loginUser = null;
+	
+		
+		  Cookie[] cookies = request.getCookies();	
+		  String userName = "";
+		  String tgtId = "";
+		  if(cookies!=null && cookies.length>0){
+			  for(Cookie ck:cookies){
+				  if(ck.getName().equals("MEMBERTGC")){
+					  
+					  tgtId = ck.getValue();
+					  break;
+				  }
+			  }
+		  }
+		  if(!"".equals(tgtId)){
+			  for(Cookie ck:cookies){
+				  if(ck.getName().equals(tgtId)){
+					  userName = ck.getValue(); 
+					  break;
+				  }
+			  }
+		  }
+		 
+		  
+	 	if (userName!=null&&!"".equals(userName)) {
+			    		
+			loginUser = memberService.getMemberByAccount(userName);
+
+			int parentId = 0;
+			int accreditStatus = 0;
+			//int memberType = 0;
+			int roleId = 0;
+			String userUrl = "";
+			if(null!=loginUser.get("parentId")){
+				parentId = PraseUtil.praseInt(loginUser.get("parentId"));
+			}else{
+				parentId=1;
+			}
+			
+			accreditStatus = PraseUtil.praseInt(loginUser.get("accreditStatus"));
+			//memberType = PraseUtil.praseInt(loginUser.get("memberType"));
+			roleId = Integer.parseInt(loginUser.get("roleId").toString());
+			try {
+				userUrl = PropertyPlaceholderConfigurerExt.getContextProperty("member.user.url").toString();
+			} catch (Exception e) {
+				LogMgr.writeErrorLog(e);
+			}
+			String userType = "member";
+
+            if(parentId>0){
+                if(accreditStatus==2){
+                    userType="memberCorporation";
+                    userUrl=PropertyPlaceholderConfigurerExt.getContextProperty("member.user.url").toString();
+                }else{
+                    userType="member";
+                }
+            }else{
+            	//2014_11_18  roleId=83 为买家，其他为卖家
+				if (roleId == 83) {// 买家
+					userType = "memberBuy";
+					userUrl = PropertyPlaceholderConfigurerExt.getContextProperty("member.buyMember.url").toString();
+				}else{// 卖家
+					userType = "memberSale";
+					userUrl = PropertyPlaceholderConfigurerExt.getContextProperty("member.saleMember.url").toString();
+				}
+            }
+                loginUser.put("userType",userType);
+                loginUser.put("userUrl",userUrl);
+                
+            }
+	  
+	  	return loginUser;	
+		  
+	  }
+}

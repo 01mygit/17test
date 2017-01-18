@@ -1,0 +1,64 @@
+/**
+ * 
+ */
+package com.wangku.was.encyclopedia.utils;
+
+import java.util.Properties;
+
+/**
+ * @author 		linyajun
+ *
+ * @date   		2014年6月18日
+ *
+ * @description 资源文件帮助类
+ **/
+public final class ResourceFileUtil {
+
+	private final static String FILENAME="urlconfig.properties";
+	private static Properties p=new Properties();
+	
+	static{
+		try {
+			p.load(ResourceFileUtil.class.getClassLoader().getResourceAsStream(FILENAME));
+		} catch (Exception e) {
+			throw new RuntimeException("this "+FILENAME+" can't find!!",e);
+		}
+	}
+	
+	/**
+	 * @param key
+	 * @return
+	 */
+	public static String getValue(String key){
+		
+		return p.getProperty(key);
+	}
+	
+	public static String getCurrentEnvironment(){
+		
+		return getValue("ENVIRONMENT");
+	}
+	
+	public static String getCurrentNav(){
+		
+		return getValue("NAV");
+	}
+	
+	public static String getTopUrl(){
+		
+		return getValue("top.url");
+		
+	}
+	
+	public static String getBottomUrl(){
+		return getValue("bottom.url");
+	}
+	
+	public static String getDetailTopUrl(){
+		return getValue("detailTop.url");
+	}
+	
+	public static void main(String[] args) {
+		System.err.println(getValue("ENVIRONMENT"));
+	}
+}

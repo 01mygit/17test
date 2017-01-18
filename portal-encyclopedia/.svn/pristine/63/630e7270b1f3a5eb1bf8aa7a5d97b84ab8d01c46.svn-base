@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>${title!}知识,品牌,简介,特点,作用_品类百科-中国网库</title>
+<meta name="keywords" content="${title!},品类百科,百科,百科全书,百科知识大全" />
+<meta name="description" content="${filterDetail?substring(0,80)}"/>
+<#include "/common/global.html">
+<script type="text/javascript" src="${templateRoot}/js/baike.js"></script>
+<script type="text/javascript">
+$(function(){
+	$("#txtSearch").searchKeyword({type: 1,maxResult: 10});
+});
+</script>
+<!--[if IE 6]>
+<style type="text/css">
+html {_background:url(a.txt) fixed;overflow-x:hidden;overflow-y:scroll;}
+.top_out{position:absolute; _top:expression(documentElement.scrollTop);margin-top:0;}
+</style>
+<![endif]-->
+
+
+<script type="text/javascript">
+ var redirect =  function(url){
+    this.location =  "zixun.99114.com"+url;
+} 
+
+</script>
+</head>
+
+<body>
+<!--header begin-->
+${portalTopUrl!}
+<!--header end-->
+<!--list位置-->
+<div class="wrapper">
+<div class="art-List-wz">
+您的当前位置：<a href="http://www.99114.com" target="_blank">首页</a>><a href="${webRoot!}" target="_blank">品类百科</a>><span class="orange">${title!}</span>
+</div>
+</div>
+<!--main-->
+<div class="wrapper cls">
+	<div class="art2L_details floatL boder-line mT10">
+        <div class="sideline last_l">
+            <h1>
+            <#if title?? && title?length gt 20>
+                   		${title?substring(0,20)}
+            <#else>
+                   		${title!}
+            </#if>
+            </h1>
+           	${detail!}
+        </div>
+    </div>
+    <div class="w280 floatR art2R_details mT10">
+    	<div class="details-h190">
+        	<h3>欢迎各大企业加入中国网库！</h3>
+            <h4>免费注册，享受3大服务：</h4>
+            <ul>
+            	<li>免费查看求购信息</li>
+                <li>免费发送商品信息</li>
+                <li>免费享受网上推广服务</li>
+            </ul>
+            <a class="art2freeLogin_details" href="${registerUrl!}" target="_blank">免费注册</a>
+        </div>
+        
+        
+        <div class="mT10">
+        	<div class="s-tit"><h3>推荐企业</h3></div>
+            <div class="art2R-h392">
+            	<ul class="art2R-h392Ul-details">
+            		<#list corporationTJQY! as l> <#if (l_index < 5)>
+	                	<li>
+	                    	<a class="art2R-h392Pic" href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}" target="_blank"><img src="${l.logo!}"></a>
+	                        <h3><a href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}" target="_blank">
+	                        
+	                        <#if l.corporationName!?? && l.corporationName!?length gt 12>
+                        				${l.corporationName?substring(0,12)}
+                       				<#else>
+                       					${l.corporationName!}
+                       		</#if>
+	                       	 
+	                        </a></h3>
+	                        <p>
+	                        <#if l.summary?? && l.summary?length gt 20>
+                        				${l.summary?substring(0,20)}…
+                       				<#else>
+                       					${l.summary!}
+                       				</#if>
+	            
+	                        
+	                        </p>
+	                    </li>
+                    <#else> <#break> </#if> </#list>
+                </ul>
+            </div>
+        </div>
+        <div class="mT10">
+        	<div class="s-tit"><h3>热点资讯</h3><a href="${siteDetail.URLMAP.INFORMATION_DETAIL_URL!}list?code=101101" target="_blank">更多>></a></div>
+            <ul class="art2RUl_details">
+	            <#list articleListHYZX! as l> <#if l_index < 10>
+	            	<li><a href="${siteDetail.URLMAP.INFORMATION_DETAIL_URL!}${(l.id!)?c}_${l.datastatus}.html" target="_blank">${l.title!}</a></li>
+	            <#else> <#break> </#if> </#list>   
+            </ul>
+        </div>
+        <div class="mT10">
+        	<div class="s-tit"><h3>最新商机</h3></div>
+            <ul class="art2RBtm_details">
+            
+            <#list corporationZXSJ! as l>
+				<#if (l_index < 4)>
+					
+			       <li>
+				       	<a class="art2RBtmPic_detailes" href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}/pd${(l.id!)?c}.html" target="_blank">
+				       		<img src="${l.pic}" width="120" height="120" alt="${l.name!}" title="${l.name!}">
+				       	</a>
+				       	<p>
+				       		<a href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}/pd${(l.id!)?c}.html" target="_blank">${l.name!}</a>
+				       	</p>
+			       </li>
+		        		
+		        </#if>
+       		 </#list>
+            	
+            	
+               
+            </ul>
+        </div>  
+    </div>
+</div>
+<div class="cls"></div>
+<!--end main-->
+<!--footer begin-->
+${mapTopAndFooter.detailFooter!}
+<!--footer end-->
+<!--二维码 start-->
+<div id="qrcode" >
+	<p>扫一扫，关注网库</p>
+    <img src="/template/images/code_icon.jpg" width="105" height="105">
+    <p>网库官方微信平台</p>
+</div>
+<!--二维码 end-->
+<!--返回顶部 start-->
+<div id="gotop">
+    <a href="javascript:backToTop()" id="backToTop"></a>
+</div>
+<!--返回顶部 end-->
+<@ad.getAdvertisesHtml code="1_123_2_advertGroup9161"  />
+<#include "/common/statisticalT.html">
+</body>
+</html>

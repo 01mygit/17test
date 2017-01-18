@@ -1,0 +1,7 @@
+ <#list articleListZHTJ! as l> 
+   <#if l_index < 10>
+   		<li><a href="${siteDetail.URLMAP.INFORMATION_DETAIL_URL!}${l.id}_${l.datastatus}.html" target="_blank"> ${l.title}</a></li>
+   <#else> 
+	 	<#break> 
+   </#if> 
+</#list>

@@ -1,0 +1,7 @@
+package com.wangku.was.encyclopedia.constant;
+
+public class SupplyCode {
+	
+	public static final String BUSINESS = "124"; //最新商机
+	
+}

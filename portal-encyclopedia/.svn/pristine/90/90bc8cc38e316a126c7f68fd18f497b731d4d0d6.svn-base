@@ -1,0 +1,47 @@
+<#--网站绝对路径-->
+<#assign ctxPath=request.contextPath>
+<#global webRoot="${ctxPath!}/"> 
+<#--网站静态文件路径-->
+<#global staticRoot="${webRoot}static/">
+<#--登录路径-->
+<#global loginUrl="${ctxPath!}/login/toIndex">
+<#global supplyRoot="${ctxPath!}/supply/"> 
+<#global buyRoot="${ctxPath!}/buy/">
+<#global informationRoot="${ctxPath!}/information/">
+<#global corporationRoot="${ctxPath!}/corporation/">
+<#global articleRoot="${ctxPath!}/article/">
+<#global baikeRoot="${ctxPath!}/baike/">
+<#if siteDetail?exists>
+<#--注册路径-->
+<#global registerUrl="http://member.99114.com/login/gotoRegister?siteId=${siteDetail.id!}&backUrl=http://lvcha.99114.cn/login/toIndex">
+
+<#--供应详细路径-->
+<#global supplyUrl="${siteDetail.supplyurl!}">
+<#--资讯详细路径-->
+<#global articleDetailUrl="${siteDetail.articleDetailUrl!}" >
+<#--会员中心 发布产品信息页面-->
+<#global releaseSupplyUrl="${siteDetail.URLMAP.RELEASE_SUPPLY_Url!}">
+<#--会员中心 发布采购单页面-->
+<#global releaseBuyUrl="${siteDetail.URLMAP.RELEASE_BUY_Url!}">
+<#--已卖出货品页面-->
+<#global hasSaleUrl="${siteDetail.URLMAP.HAS_SALE_Url!}">
+<#--已买到货品页面-->
+<#global hasBuyUrl="${siteDetail.URLMAP.HAS_BUY_Url!}">
+<#--店铺管理页面-->
+<#global homeManagerUrl="${siteDetail.URLMAP.SHOP_HOME!}">
+<#--消息中心页面-->
+<#global msgCenterUrl="${siteDetail.URLMAP.MSG_CENTER!}">
+<#--购物车结算页面-->
+<#global toTradeUrl="${siteDetail.URLMAP.TOTRADE!}">
+</#if>
+<#if Session.isLogin?exists>
+		<#global isLogin = Session.isLogin>
+		<#else>
+		<#global isLogin = false>
+</#if>
+<#if Session.loginUser?exists>
+		<#global loginUser = Session.loginUser>
+		<#else>
+		<#global loginUser = "">
+</#if>
+<#import "/common/substring.ftl" as toSubString> 

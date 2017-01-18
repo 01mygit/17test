@@ -1,0 +1,3 @@
+dubbo.server=172.16.0.205:2181
+dubbo.accesslog=
+dubbo.file=

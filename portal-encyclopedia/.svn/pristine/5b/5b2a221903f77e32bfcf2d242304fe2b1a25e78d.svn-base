@@ -1,0 +1,5 @@
+  <#list baikeRCTJ! as l>
+			<#if (l_index < 7)>
+                   <p><i>${l_index+4}</i><a href="/${l.id!}.html" target="_blank">${l.title}</a></p>
+             </#if>
+      </#list>  

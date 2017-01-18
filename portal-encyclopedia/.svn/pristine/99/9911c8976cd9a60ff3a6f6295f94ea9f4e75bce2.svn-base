@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<#if key??>
+<title>【${key!}】_百科搜索-中国网库</title>
+<meta name="keywords" content="${key!},品类百科,百科,百科全书,百科知识大全" />
+<meta name="description" content="中国网库品类百科是集电子商务知识于一体的百科全书，品类百科为国内外所有商家提供最准确的商品知识，让每一个用户更方便、更精准的去了解每一款产品。" />
+<#else>
+<title>产品百科知识大全_品类百科-中国网库</title>
+<meta name="keywords" content="产品百科，品类百科，百科，百科全书，百科知识大全" />
+<meta name="description" content="中国网库品类百科汇集了最专业的产品百科知识，产品百科为国内外所有商家提供最准确的商品知识，让每一个用户更方便、更精准的去了解每一款产品。" />
+</#if>
+<#include "/common/global.html">
+<link type="text/css" href="${templateRoot}/css/List.css" rel="stylesheet" />
+<script type="text/javascript">
+$(function(){
+	$("#txtSearch").searchKeyword({type: 1,maxResult: 10});
+});
+</script>
+<!--[if IE 6]>
+<style type="text/css">
+html {_background:url(a.txt) fixed;overflow-x:hidden;overflow-y:scroll;}
+.top_out{position:absolute; _top:expression(documentElement.scrollTop);margin-top:0;}
+</style>
+<![endif]-->
+</head>
+
+<body>
+<!--header begin-->
+${portalTopUrl!}
+<!--header end-->
+<!--list位置-->
+<div class="wrapper">
+<div class="art-List-wz">
+您的当前位置：<a  href="http://www.99114.com" target="_blank">首页</a> > <a href="http://baike.99114.com" target="_blank">百科信息</a> > <span class="orange">${key!}</span>
+</div>
+</div>
+<!--main-->
+<div class="wrapper">
+	<div class="w710 floatL art2L mT10">
+		<#list baikeList! as l>
+	        <div class="art2LCon">
+	        	<div class="art2Ltit">
+	        		<a href="/${l.id!}.html" target="_blank" title="${l.title!}">
+						${l.title_high!}
+	        		</a>
+	        	</div>
+	            <p>
+	            	<#if l.summary?? && l.summary?length gt 125>
+							${l.summary?substring(0,125)}…
+					<#else>
+						${l.summary!}
+					</#if>
+			            
+		            <a href="/${l.id!}.html">【详情】</a>
+	            </p>
+	            <span>发布时间：${l.add_time!?datetime("yyyy-MM-dd hh:mm:ss")} </span>
+	        </div>
+	       
+        </#list>
+        <div class="art2page">
+        <#if recordCount??>
+        	<#import "/common/page.ftl" as q> 
+			<#if (recordCount>pageSize)> 
+				<#if recordCount gt (pageSize*100)>
+					<#if searchKeySign == "0">
+						<@q.pagerSeoSk pageNo=pageNo pageSize=pageSize toURL="" recordCount=pageSize*100 requestUrlS=requestURLS queryString=queryString /> 
+					<#else>
+						<@q.pagerSeo pageNo=pageNo pageSize=pageSize toURL="" recordCount=pageSize*100 requestUrl=pageURL /> 
+					</#if>
+				<#else>
+					<#if searchKeySign == "0">
+						<@q.pagerSeoSk pageNo=pageNo pageSize=pageSize toURL="" recordCount=recordCount requestUrlS=requestURLS queryString=queryString />
+					<#else>
+						<@q.pagerSeo pageNo=pageNo pageSize=pageSize toURL="" recordCount=recordCount requestUrl=pageURL />
+					</#if>
+				</#if>
+			</#if>
+		</#if>
+        </div>
+    </div>
+    <div class="w280 floatR art2R mT10">
+    	<div class="art2R-h190">
+        	<h3>欢迎各大企业加入中国网库！</h3>
+            <h4>免费注册，享受3大服务：</h4>
+            <ul>
+            	<li>免费查看求购信息</li>
+                <li>免费发送商品信息</li>
+                <li>免费享受网上推广服务</li>
+            </ul>
+            <a class="art2freeLogin" href="${registerUrl!}" target="_blank">免费注册</a>
+        </div>
+        <div class="mT10">
+        	<div class="s-tit"><h3>推荐企业</h3></div>
+            <div class="art2R-h392">
+            	<ul class="art2R-h392Ul">
+	            	<div id="tjqybaikeDIV"><#include "includeHtml/tjqybaike.html"></div>
+                </ul>
+                <script type="text/javascript">
+					//推荐企业
+					ajaxDiv("/tjqybaike","tjqybaikeDIV");
+				</script> 
+            </div>
+        </div>
+        <div class="mT10">
+        	<div class="s-tit"><h3>行业资讯</h3><a href="${siteDetail.URLMAP.INFORMATION_DETAIL_URL!}list?code=${hyzxCode!}" target="_blank">更多>></a></div>
+            <ul class="art2RUl">
+             <div id="industryDIV"><#include "includeHtml/industry.html"></div>
+            </ul>
+            <script type="text/javascript">
+					//行业资讯
+					ajaxDiv("/industry","industryDIV");
+				</script> 
+        </div>
+        <div class="mT10">
+        	<div class="s-tit"><h3>最新商机</h3></div>
+            <ul class="art2RBtm">
+	           <#list corporationZXSJ! as l>
+					<#if (l_index < 4)>
+						
+				       <li>
+					       	<a class="art2RBtmPic" target="_blank" href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}/pd${(l.id!)?c}.html">
+					       		<img src="${l.pic}" width="120" height="120" alt="${l.name!}" title="${l.name!}">
+					       	</a>
+					       	<p>
+					       		<a href="${siteDetail.URLMAP.shopUrl!}/${(l.memberId!)?c}/pd${(l.id!)?c}.html" target="_blank">${l.name!}</a>
+					       	</p>
+				       </li>
+			        		
+			        </#if>
+	      		 </#list>
+            </ul>
+        </div>  
+    </div>
+</div>
+<div class="cls"></div>
+<!--end main-->
+<!--footer begin-->
+${portalFooterUrl!}
+<!--footer end-->
+<!--二维码 start-->
+<div id="qrcode" >
+	<p>扫一扫，关注网库</p>
+    <img src="/template/images/code_icon.jpg" width="105" height="105">
+    <p>网库官方微信平台</p>
+</div>
+<!--二维码 end-->
+<!--返回顶部 start-->
+<div id="gotop">
+    <a href="javascript:backToTop()" id="backToTop"></a>
+</div>
+<!--返回顶部 end-->
+<@ad.getAdvertisesHtml code="1_123_2_advertGroup9161"  />
+<#include "/common/statisticalT.html">
+<script type="text/javascript">
+ $(function(){
+	var txtKey = "${key!}";
+	$("#txtSearch").val(txtKey);
+});
+</script>
+</body>
+</html>

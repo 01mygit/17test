@@ -1,0 +1,186 @@
+$.fn.extend({
+/* 用途:联想搜索插件padding:5px 0;
+ * 参数:
+ *      1.options type搜索类型(1.供应,2.求购,3.招商,4,公司,5.资讯)
+ *      2.callback回调方法
+ */
+	
+
+searchKeyword:function( options, callback ) {
+    var settings = {
+        type: 1,
+        maxResult: 10,
+        maxPinLei: 5,
+        top: 0,
+        left: 0,
+        width: 0,
+        out: "search_toplist",
+        innerOn: "",
+        innerOff: "search_li_bj"
+    }
+    
+    options = options || {};
+    $.extend(settings, options);
+    var $this = $(this);
+    var _this = this;
+    var tagName1 = $this.attr("tagName");
+    if(tagName1 != null && tagName1 != 'undefind'){
+    	if( $this.attr("tagName").toLowerCase() != "input") {
+            return ;
+        }
+    }
+    var identityId =+ new Date,idenName = "";
+    idenName = "#searchKeyWord" + identityId;
+    var createDom = $( idenName);
+    if( createDom.length == 0 ) {
+        var createDiv = $('<ul></ul>');	
+        $(this).after(createDiv);
+        //$(createDiv).css( {'position': 'absolute','z-index': '10000','top':$this.offset().top + $this.height() + settings.top,'left':$this.offset().left + settings.left,'width': settings.width == 0 ? $this.width() : settings.width + "px" } );
+        $(createDiv).attr( {'id': "searchKeyWord" + identityId,"class": settings.out} );
+        createDom = createDiv;
+    }
+    $( idenName ).hide();
+    $( this ).bind("keydown", function( e ) {
+        var key = e.keyCode;
+        if( !(key == 38 || key == 40) ) {
+            return ;
+        }
+        (function() {
+              var currentObj=null;
+              $( idenName).find("li").each( function(i, obj) {
+                    if($(obj).attr("class") == settings.innerOff ){
+                        currentObj = obj;
+                        return false;
+                    }
+                } )
+              if (key == 38) {
+                     if(currentObj == null || currentObj == undefined ) {
+                        if($( idenName).find("li").length > 0)
+                        $( idenName).find("li:last").attr("class",settings.innerOff);
+                        if($( idenName).find("li:last").attr("tag") != "1" )
+                        $(_this).val($( idenName).find("li:last A").attr("showname"));
+                     }
+                     else {
+                         $(currentObj).attr("class",settings.innerOn);
+                         $(currentObj).prev().attr("class",settings.innerOff); 
+                         if($(currentObj).prev() != "1" )
+                         $(_this).val($(currentObj).prev().find("A").attr("showname"));
+                     }
+                }
+              if (key == 40) {
+                    if(currentObj == null || currentObj == undefined ) {
+                        if($( idenName).find("li").length > 0)
+                        $( idenName).find("li:first").attr("class",settings.innerOff);
+                        if($(_this).attr("tag") != "1" )
+                        $(_this).val($( idenName).find("DIV:first A").attr("showname"));
+                    }
+                    else {
+                         $(currentObj).attr("class",settings.innerOn);
+                         $(currentObj).next().attr("class",settings.innerOff); 
+                         if($(currentObj).next().attr("tag") != "1" )
+                         $(_this).val($(currentObj).next().find("A").attr("showname"));
+                    }
+                }
+        })();
+        
+    })
+    
+    $('body').click(function() {
+            $( idenName ).hide();
+    })
+    
+    $( this ).bind("click", function(e) {
+        if($(this).val() != "") {
+        if(e && e.stopPropagation) {
+             e.stopPropagation();
+          }else {
+             window.event.cancelBubble = true;
+          }
+          //$( idenName ).show();
+        }
+    })
+    var template = "<li class='" + settings.innerOn + "'  onmouseover='this.className=\"" + settings.innerOff + "\";$(\"#" + $(_this).attr("ID") + "\").val($(this).find(\"a\").attr(\"showname\"))' onmouseout='this.className=\"" + settings.innerOn + "\"'  tag='0' >{NAME}</li>";
+    var template1 = "<li class='" + settings.innerOn + "' tag='1' onmouseover='this.className=\"" + settings.innerOff + "\";' onmouseout='this.className=\"" + settings.innerOn + "\"' >{NAME}</li>";
+    if( $(this).val() != "" ) {
+        
+       $this.bind( "keyup", function( e ) {
+            var searchUrl = "supply/",current = "";
+            current = $("#searchTabUl li[class='on'] A").html();
+  
+            var channel = ""; //查询的类型
+            switch (current) {
+                case "供应" :
+                    searchUrl = "gongying.99114.com/";
+                    channel=1;
+                    break;
+                case "求购" :
+                    searchUrl = "caigou.99114.com/";
+                    channel=2;
+                    break;
+                case "公司" :
+                    searchUrl = "qiye.99114.com/";
+                    channel=3;
+                    break;
+                case "招商" :
+                    searchUrl = "zhaosh.99114.com/";
+                    channel=4;
+                    break;
+                case "资讯" :
+                    searchUrl = "zixun.99114.com/";
+                    channel=5;
+                    break;
+                case "百科" :
+                    searchUrl = "baike.99114.com/";
+                    channel=6;
+                    break;
+                default :
+                    searchUrl=$("#search_xl>h3>a").attr("searchtype")+"/";
+                    if(searchUrl=="/"){
+                        searchUrl = "supply/";
+                    }
+                    break;
+            }
+           var keyNum = e.keyCode;
+           if(keyNum == 38 || keyNum == 40 )
+           return ;
+           
+           var v = $(this).val();
+           
+           //1:-suplly 供应  2:member 会员 3：purchase 采购 4：Investment 招商 5：news 资讯 6：baike 百科  （默认供应）
+         
+           var url ="/portal/sousuo?c=10&channel="+channel+"&name="+v;
+           
+           $.getJSON(url+"&t="+new Date, function(json) {
+                if(json != null && json != 'undefind') {
+                	
+                    $( idenName ).empty();
+                    if(json.searchWord!=null && json.searchWord!=""){
+                    	if(json.searchWord.length > 0) {
+                            for(var i in json.searchWord){
+                                if(json.searchWord[i].Word != undefined ) {
+                                	if(channel==1 && i==0){
+	                            		var b="<a href='http://"+searchUrl+ "listing/"+json.searchWord[i].Word+"' showname = " + json.searchWord[i].Word +">"+json.searchWord[i].Word.replace($this.val(),"<font color='red'>" + $this.val() + "</font>")+"</a>"+"<span style='float:right;margin-right:5px;'>约"+json.searchWord[i].Count+"条结果</span>"
+	                            		for(var j in json.category){
+	                            			 var key=encodeURI(json.searchWord[i].Word);
+	                            			 var a="<a href='http://"+searchUrl+ "list?cp=1&k="+key+"&code=" + json.category[j].code +"' showname = " + json.searchWord[i].Word +">"+"在<font color='red'><B>"+json.category[j].name + "</font></B>分类中搜索"+"</a>"+"<span style='float:right;margin-right:5px;'>约"+json.category[j].hits+"条结果</span>";
+	                            			 b=b+"<br> &nbsp;&nbsp;"+a;
+	                            			 //createDom.append( $( template2.replace(/\{NAME\}/ig,"<a href='http://"+searchUrl+ "list?cp=1&k="+key+"&code=140131' showname = " + json.searchWord[i].Word +">"+"在<font color='red'><B>"+json.category[j].name + "</font></B>结果中搜索"+"</a>"+"<span style='float:right;margin-right:5px;'>约"+json.category[j].hits+"条结果</span>") ) );
+	                            		 }
+	                            		createDom.append( $( template.replace(/\{NAME\}/ig,b)));
+	                            	}else{
+	                                	createDom.append( $( template.replace(/\{NAME\}/ig,"<a href='http://"+searchUrl+ "listing/"+json.searchWord[i].Word+"' showname = " + json.searchWord[i].Word +">"+json.searchWord[i].Word.replace($this.val(),"<font color='red'>" + $this.val() + "</font>")+"</a>"+"<span style='float:right;margin-right:5px;'>约"+json.searchWord[i].Count+"条结果</span>") ) );
+	                            	}
+                                }
+                            }
+                        }
+                    }
+                    $( idenName ).show();
+                }
+                else {
+                    $( idenName ).hide();
+                }
+            }); 
+       } );
+    }
+}
+})

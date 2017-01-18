@@ -1,0 +1,708 @@
+package com.wangku.was.encyclopedia.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.wangku.was.categorynet.common.article.dubbo.IArticleService;
+import com.wangku.was.categorynet.common.baike.dubbo.IBaikeSeekService;
+import com.wangku.was.categorynet.common.baike.dubbo.IBaikeService;
+import com.wangku.was.categorynet.common.constant.EnumArticleType;
+import com.wangku.was.categorynet.common.constant.EnumStatus;
+import com.wangku.was.categorynet.common.constant.OrderType;
+import com.wangku.was.categorynet.common.constant.PicFormatType;
+import com.wangku.was.categorynet.common.constant.SiteInfo;
+import com.wangku.was.categorynet.common.constant.SortType;
+import com.wangku.was.categorynet.common.constant.Status;
+import com.wangku.was.categorynet.common.corporation.dubbo.ICorporationService;
+import com.wangku.was.categorynet.common.supply.dubbo.ISupplyService;
+import com.wangku.was.categorynet.common.utils.HTMLContents;
+import com.wangku.was.categorynet.common.utils.HrefUtil;
+import com.wangku.was.categorynet.common.utils.ParseCode;
+import com.wangku.was.classify.dubbo.IRDubboSearchKeyMapperService;
+import com.wangku.was.dic.model.SysDictionary;
+import com.wangku.was.dic.service.ISysDictionaryService;
+import com.wangku.was.encyclopedia.constant.ArticleCode;
+import com.wangku.was.encyclopedia.constant.BaikeCode;
+import com.wangku.was.encyclopedia.constant.MemberCode;
+import com.wangku.was.encyclopedia.constant.SupplyCode;
+import com.wangku.was.encyclopedia.enums.CacheEnum;
+import com.wangku.was.encyclopedia.utils.EnvironmentContext;
+import com.wangku.was.encyclopedia.utils.SysDictionaryCompute;
+import com.wangku.was.encyclopedia.web.SiteBaseController;
+import com.wangku.wjf.common.cache.dao.CacheManagerDao;
+import com.wangku.wjf.common.utils.json.CollectionsParseJSON;
+
+/**
+ * 
+ * @Title: BaikeController.java 
+ * @Description: 百科  
+ * @author yanjingliang  
+ * @Modified yanjingliang      
+ * @date 2013-7-24 上午11:16:18   
+ * @version V1.0
+ */
+@Controller
+@RequestMapping(value = "/")
+public class BaikeController extends SiteBaseController {
+	
+	@Autowired
+	private IBaikeService baikeService;
+	@Autowired
+	private IArticleService articleService;
+	
+	@Autowired
+	private ISupplyService supplyService;
+	/**
+	 * 数据字典
+	 */
+	@Autowired
+	private ISysDictionaryService sysDictionaryService;
+	/**
+	 * 百科搜素
+	 */
+	@Autowired
+	private IBaikeSeekService baikeSeekService;
+	@Autowired
+	private ICorporationService corporationService;
+	@Autowired
+	private CacheManagerDao cacheManagerDao;
+    @Autowired
+    private IRDubboSearchKeyMapperService rDubboSearchKeyMapperService;
+	/**
+	 * 异步请求调取最新动态
+	 * 
+	 * @param mav
+	 * @return
+	 */
+	@RequestMapping(value = "biakeProduct")
+	@ResponseBody
+	public ModelAndView Dynamic(ModelAndView mav, HttpServletRequest request) {
+		
+		String initial = request.getParameter("initial");
+		//产品百科	
+		List<Map<Object, Object>> biakeProduct = baikeService.searchBaikeByFirstWord(SiteInfo.SITE_ID, EnumStatus.ENABLE_STATUS.getValue(), initial);
+		mav.getModel().put("biakeProduct", biakeProduct);
+		
+		 /* 公用信息 */
+        mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("Product");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * Business(资讯-最新商机) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "business")
+	@ResponseBody 
+	public ModelAndView Business(ModelAndView mav){
+
+		// 资讯-最新商机
+		List<Map<Object, Object>> corporationZXSJ =  supplyService.getSupplyHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), SupplyCode.BUSINESS, 5,PicFormatType.SUPPLY_SOLR_IMAGE_OLD_BIG,PicFormatType.SUPPLY_SOLR_IMAGE_BIG);
+		mav.getModel().put("corporationZXSJ",corporationZXSJ);
+																																	
+		/* 公用信息 */
+        mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("Business");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * CategoryBaike(品类百科置顶) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "categoryBaike")
+	@ResponseBody
+	public ModelAndView CategoryBaike(ModelAndView mav) {
+		//站点ID为1 -品类百科置顶
+		mav.getModel().put("baikeZD", baikeService.searchBaiKe(SiteInfo.SITE_ID, Status.TOP_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.CATEGORY_BAIKE));
+		
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("CategoryBaike");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * BaikeHotWords(百科热词置顶) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "baikeHotWords")
+	@ResponseBody
+	public ModelAndView BaikeHotWords(ModelAndView mav) {
+		//百科热词置顶
+		mav.getModel().put("baikeRCZD", baikeService.searchBaiKe(SiteInfo.SITE_ID, Status.TOP_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.BAIKE_Hot_WORDS));
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("BaikeHotWords");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * BaikeHotWordsTJ(百科热词推荐) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "baikeHotWordsTJ")
+	@ResponseBody
+	public ModelAndView BaikeHotWordsTJ(ModelAndView mav) {
+		//百科热词推荐						
+		mav.getModel().put("baikeRCTJ", baikeService.searchBaiKe(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.BAIKE_Hot_WORDS));
+				
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("BaikeHotWordsTJ");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * BaikeBrand(百科品牌) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "baikeBrand")
+	@ResponseBody
+	public ModelAndView BaikeBrand(ModelAndView mav) {
+		//百科品牌	
+		mav.getModel().put("baikePPTJ", baikeService.searchBaiKe(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.BAIKE_BRAND));		
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("BaikeBrand");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * BaikeBrand(百科品牌) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "baikeClassification")
+	@ResponseBody
+	public ModelAndView BaikeClassification(ModelAndView mav) {
+		//分类百科
+		mav.getModel().put("baikeFLTJ", baikeService.searchBaiKe(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.BAIKE_CLASSIFICATION));
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("BaikeClassification");
+		return mav;
+	}
+	
+	
+	/**
+	 * Index(品类百科首页)
+	 * @param m
+	 * @return ModelAndView
+	 * @exception
+	 * @since 1.0
+	 */
+	@RequestMapping(value="")
+	public ModelAndView Index(ModelAndView m) {
+		
+		SysDictionary sysDictionary = new SysDictionary();
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.RECOMMEND_STATUS.getDescription(), sysDictionary);
+		
+		int recommend = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		
+		//获取推荐状态幂值
+		Status.RECOMMEND_STATUS  = recommend!=0?recommend:Status.RECOMMEND_STATUS;
+		
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.TOP_STATUS.getDescription(), sysDictionary);
+	
+		int top = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		//获取置顶状态幂值
+		Status.TOP_STATUS = top !=0? top :Status.TOP_STATUS; 
+		
+		// 调取资讯展会推荐
+		//List<Map<Object, Object>> articleListZHTJ = articleService.searchArticle(8, 10, 0, 0, ArticleCode.ADVERTISING);
+		
+		//站点ID为1 -品类百科推荐
+		//m.getModel().put("baikeTJ", searchBaiKe(Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), BaikeCode.CATEGORY_BAIKE));
+		
+		
+		
+		
+		//m.getModel().put("articleListZHTJ", articleListZHTJ);
+		//产品百科	
+		List<Map<Object, Object>> biakeProduct = baikeService.searchBaikeByFirstWord(SiteInfo.SITE_ID, EnumStatus.ENABLE_STATUS.getValue(), "A");
+		m.getModel().put("biakeProduct", biakeProduct);
+		
+		//公用信息
+        m.getModel().put("siteDetail", super.getSiteDetail());
+		m.setViewName("Index");
+		return m;
+	}
+	
+	/**
+	 * BaikeIndex(百科列表)
+	 * @param m
+	 * @return ModelAndView
+	 * @exception
+	 * @since 1.0
+	 */
+	@RequestMapping(value = "/list")
+	public ModelAndView BaikeList(ModelAndView m, HttpServletRequest request) {
+		
+		SysDictionary sysDictionary = new SysDictionary();
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.RECOMMEND_STATUS.getDescription(), sysDictionary);
+		
+		int recommend = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		
+		//获取推荐状态幂值
+		Status.RECOMMEND_STATUS  = recommend!=0?recommend:Status.RECOMMEND_STATUS;
+		
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.TOP_STATUS.getDescription(), sysDictionary);
+	
+		int top = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		//获取置顶状态幂值
+		Status.TOP_STATUS = top !=0? top :Status.TOP_STATUS;
+		
+		// 品类百科-行业资讯
+		List<Map<Object, Object>> articleListHYZX = articleService.getArticleHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), "101111");
+		
+		// 品类百科-推荐企业
+		List<Map<Object, Object>>corporationHYQY = corporationService.getMemberHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 5, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), "124");
+		
+		String cp = request.getParameter("cp");// 获取是否是呗拦截路径
+		
+		//当前请求地址
+		String requestURL=request.getRequestURL().toString();
+        if(null!=request.getQueryString()&&request.getQueryString()!=""&&request.getQueryString()!="null"){
+        	requestURL=request.getRequestURL()+ "?" + (ParseCode.parseRequsetGetBytes(request.getQueryString()));
+        	if(null != cp){
+        		requestURL = requestURL.replace("&cp=1", "");
+            }
+        }
+        
+        //用于分页搜索静态化标记
+      	m.getModel().put("searchKeySign", "1");
+        
+        System.out.print("System.out.print==="+request.getCharacterEncoding());
+		String key = "";
+		if(null != cp && !"".equals(cp) && cp.equals("1")){
+				key = ParseCode.parseRequsetGetBytes(request.getParameter("k"));// 获取搜索关键词
+		}else{
+			if(!"utf-8".equals(request.getCharacterEncoding())){
+				key = ParseCode.parseRequsetGetBytes(request.getParameter("k"));// 获取搜索关键词
+			}else{
+				key = request.getParameter("k");// 获取搜索关键词
+			}
+		}
+		
+		//去搜索关键词库查询搜索关键词别名对应名称
+		key = getSearchKeywordName(key);
+		
+		if(null==key||key.equals("")){
+			key="*";
+		}else{
+			m.getModel().put("key", key);
+		}
+		String pageNoStr = ParseCode.ParseRequsetParam(request.getParameter("pageNo"));// 获取当前页号
+		long pageNo = 1;
+		if (null == pageNoStr || pageNoStr.isEmpty()) {
+		    pageNoStr="1";
+		}
+		pageNo = Long.parseLong(pageNoStr);
+		
+		Map<String, String> mapParams = new HashMap<String, String>();
+        //拼接静态化分页链接
+        splicePageLink(m,request,mapParams);
+		
+		Map<String, Object> map = baikeSeekService.baikeSeek(key,pageNoStr, 30,SiteInfo.SITE_ID);
+		m.getModel().put("pageNo", pageNo);
+		m.getModel().put("pageSize", 30);
+		long recordCount = 0;
+		if(null!=map){
+			recordCount = Long.parseLong(map.get("recordCount").toString());
+			m.getModel().put("baikeList", map.get("list"));
+		}
+		m.getModel().put("recordCount", recordCount);
+//		m.getModel().put("hyzx", ArticleCode.HYZX);
+		m.getModel().put("articleListHYZX", articleListHYZX);
+		m.getModel().put("corporationHYQY", corporationHYQY);
+		
+		// 百科详细信息-最新商机
+		List<Map<Object, Object>> corporationZXSJ =  supplyService.getSupplyHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), SupplyCode.BUSINESS, 5,PicFormatType.SUPPLY_SOLR_IMAGE_OLD_BIG,PicFormatType.SUPPLY_SOLR_IMAGE_BIG);
+		m.getModel().put("corporationZXSJ",corporationZXSJ);
+		
+		
+		m.getModel().put("pageURL", HrefUtil.getHref(requestURL, "pageNo", pageNoStr));
+		
+		/* 公用信息 */
+		m.getModel().put("navBaike", "on");
+		m.getModel().put("hyzxCode", ArticleCode.INDUSTRY);//行业资讯code
+        //公用信息
+        m.getModel().put("siteDetail", super.getSiteDetail());
+		m.setViewName("list");
+		return m;
+	}
+	
+	/**
+	 * BaikeIndex(百科列表)
+	 * @param m
+	 * @return ModelAndView
+	 * @exception
+	 * @since 1.0
+	 */
+	@RequestMapping(value = "/list1")
+	public ModelAndView BaikeList1(ModelAndView m, HttpServletRequest request) {
+		
+		SysDictionary sysDictionary = new SysDictionary();
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.RECOMMEND_STATUS.getDescription(), sysDictionary);
+		
+		int recommend = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		
+		//获取推荐状态幂值
+		Status.RECOMMEND_STATUS  = recommend!=0?recommend:Status.RECOMMEND_STATUS;
+		
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.TOP_STATUS.getDescription(), sysDictionary);
+		
+		int top = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		//获取置顶状态幂值
+		Status.TOP_STATUS = top !=0? top :Status.TOP_STATUS;
+		
+		// 品类百科-行业资讯
+		List<Map<Object, Object>> articleListHYZX = articleService.getArticleHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), "101111");
+		
+		// 品类百科-推荐企业
+		List<Map<Object, Object>>corporationHYQY = corporationService.getMemberHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 5, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), "124");
+		
+		String cp = request.getParameter("cp");// 获取是否是呗拦截路径
+		
+//		//当前请求地址
+//		String requestURL=request.getRequestURL().toString();
+//		if(null!=request.getQueryString()&&request.getQueryString()!=""&&request.getQueryString()!="null"){
+//			requestURL=request.getRequestURL()+ "?" + (request.getQueryString());
+//			if(null != cp){
+//				requestURL = requestURL.replace("&cp=1", "");
+//			}
+//		}
+		
+		
+		System.out.print("System.out.print==="+request.getCharacterEncoding());
+		String key = "";
+		if(null != cp && !"".equals(cp) && cp.equals("1")){
+			key = ParseCode.parseRequsetGetBytes(request.getParameter("k"));// 获取搜索关键词
+		}else{
+			if(!"utf-8".equals(request.getCharacterEncoding())){
+				key = ParseCode.parseRequsetGetBytes(request.getParameter("k"));// 获取搜索关键词
+			}else{
+				key = request.getParameter("k");// 获取搜索关键词
+			}
+		}
+		
+		//去搜索关键词库查询搜索关键词别名对应名称
+		key = getSearchKeywordName(key);
+		
+		if(null==key||key.equals("")){
+			key="*";
+		}else{
+			m.getModel().put("key", key);
+		}
+		String pageNoStr = ParseCode.ParseRequsetParam(request.getParameter("pageNo"));// 获取当前页号
+		long pageNo = 1;
+		if (null == pageNoStr || pageNoStr.isEmpty()) {
+			pageNoStr="1";
+		}
+		pageNo = Long.parseLong(pageNoStr);
+		
+		
+		//分页静态化，mapParams中放入参数要与查询方法informationSeek中除了pageSize、key、SiteInfo.SITE_ID三个参数，其他全部放入map中
+		Map<String, String> mapParams = new HashMap<String, String>();
+		mapParams.put("pageNo",pageNoStr);//设置终极类别
+		//拼接静态化分页链接
+		String requestURL = splicePageLink(m,request,mapParams);
+		//用于分页搜索静态化标记
+		m.getModel().put("searchKeySign", "0");
+		
+		
+		Map<String, Object> map = baikeSeekService.baikeSeek(key,pageNoStr, 30,SiteInfo.SITE_ID);
+		m.getModel().put("pageNo", pageNo);
+		m.getModel().put("pageSize", 30);
+		long recordCount = 0;
+		if(null!=map){
+			recordCount = Long.parseLong(map.get("recordCount").toString());
+			m.getModel().put("baikeList", map.get("list"));
+		}
+		m.getModel().put("recordCount", recordCount);
+//		m.getModel().put("hyzx", ArticleCode.HYZX);
+		m.getModel().put("articleListHYZX", articleListHYZX);
+		m.getModel().put("corporationHYQY", corporationHYQY);
+		
+		// 百科详细信息-最新商机
+		List<Map<Object, Object>> corporationZXSJ =  supplyService.getSupplyHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), SupplyCode.BUSINESS, 5,PicFormatType.SUPPLY_SOLR_IMAGE_OLD_BIG,PicFormatType.SUPPLY_SOLR_IMAGE_BIG);
+		m.getModel().put("corporationZXSJ",corporationZXSJ);
+		
+		
+		m.getModel().put("pageURL", HrefUtil.getHref(requestURL, "pageNo", pageNoStr));
+		
+		/* 公用信息 */
+		m.getModel().put("navBaike", "on");
+		m.getModel().put("hyzxCode", ArticleCode.INDUSTRY);//行业资讯code
+		//公用信息
+		m.getModel().put("siteDetail", super.getSiteDetail());
+		m.setViewName("list");
+		return m;
+	}
+	
+	//去搜索关键词库查询搜索关键词别名对应名称
+	public String getSearchKeywordName(String k){
+		String keywordName = k;
+		//设置缓存key
+		String cacheKey = "SYSTEM_WEB_SEARCH_KEYWORD_ALIASE";
+		//关键词别名作为key，关键词名称作为值，存入缓存
+		cacheKey = cacheKey.replace("ALIASE", k);
+		Object cache = cacheManagerDao.get(cacheKey);
+		if(cache == null){
+			keywordName = this.rDubboSearchKeyMapperService.getKeyNameByAliases(k);
+			if(keywordName != null){
+				Map<Object, Object> keywordMap = CollectionsParseJSON.getMapJSON(keywordName);
+				return keywordMap.get("type").toString();
+			}else{
+				return k;
+			}
+		}
+		return cache.toString();
+	}
+	
+	//拼接静态化后分页链接
+	public String splicePageLink(ModelAndView mav, HttpServletRequest request,Map<String, String> mapParams){
+		String keyword = (String) request.getParameter("k");
+        String requestURLS=request.getRequestURL().toString().replace("list1", "listing");//当前请求地址
+        if(keyword != null && !"".equals(keyword)){
+        	if(!"utf-8".equals(request.getCharacterEncoding())){
+        		keyword = ParseCode.parseRequsetGetBytes(keyword);// 获取搜索关键词
+			}
+        	requestURLS = requestURLS + keyword + "_";//当前请求地址
+        }
+        String queryString = "";
+        String pageNo = "1";
+        StringBuffer href= new StringBuffer();
+        Set<String> set = mapParams.keySet();
+        for (Object key : set) {
+        	String value = (String) mapParams.get(key);
+        	if(value!=null&&!value.isEmpty()){
+        		if(!"k".equals(key)&&key!="k"&&!"pageSize".equals(key)&&key!="pageSize"){
+        			if("attrGroups".equals(key)){
+        				href = href.append("attr="+value+ "&");
+        			}else if("c".equals(key)){
+        				href = href.append("code="+value+ "&");
+        			}else if("pageNo".equals(key)){
+        				pageNo = value;
+        			}else{
+        				href = href.append(key+"="+value+ "&");
+        			}
+        		}
+        	}
+        }
+		queryString = href.toString();
+        if(queryString.endsWith("&")){
+        	queryString = "?" + queryString.substring(0, queryString.lastIndexOf("&")); 
+		}
+        mav.getModel().put("requestURLS", requestURLS);
+        mav.getModel().put("queryString", queryString);
+        String requestURL = requestURLS + "pn" + pageNo + ".html" + queryString;
+        return requestURL;
+	}
+	
+	/**
+	 * BaikeDetail(百科详细)
+	 * @param m
+	 * @param id
+	 * @param status
+	 * @return ModelAndView
+	 * @exception
+	 * @since 1.0
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/detail")
+	public ModelAndView BaikeDetail(ModelAndView m,@RequestParam("id") long id) {
+		
+		SysDictionary sysDictionary = new SysDictionary();
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.RECOMMEND_STATUS.getDescription(), sysDictionary);
+		
+		int recommend = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		
+		//获取推荐状态幂值
+		Status.RECOMMEND_STATUS  = recommend!=0?recommend:Status.RECOMMEND_STATUS;
+		
+		sysDictionary = SysDictionaryCompute.getInstance().setQueryBeanConfig(EnumStatus.POWER_PARENT_CODE.getDescription(), EnumStatus.TOP_STATUS.getDescription(), sysDictionary);
+	
+		int top = SysDictionaryCompute.getInstance().getStatusNum(sysDictionaryService, sysDictionary);
+		//获取置顶状态幂值
+		Status.TOP_STATUS = top !=0? top :Status.TOP_STATUS;
+		
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		
+		map = baikeService.getBaike((int) id, 0); //目前先不考虑status状态
+		if(null!=map){
+			m.getModel().put("title", map.get("title"));
+			m.getModel().put("author", map.get("author"));
+			m.getModel().put("origin", map.get("origin"));
+			m.getModel().put("origintype", map.get("origintype"));
+			m.getModel().put("tag", map.get("tag"));
+			m.getModel().put("creater", map.get("creater"));
+			m.getModel().put("summary", map.get("summary"));
+			m.getModel().put("pictureurl", map.get("http://www.baidu.com/img/bdlogo.gif"));
+			m.getModel().put("initial", map.get("initial"));
+			m.getModel().put("status", map.get("status"));
+			m.getModel().put("addtime", map.get("addtime"));
+			m.getModel().put("mdfytime", map.get("mdfytime"));
+			m.getModel().put("sort", map.get("sort"));
+			m.getModel().put("detail", map.get("detail"));
+			m.getModel().put("code", map.get("code"));
+			
+			//获取详情的内容，过滤html标签、script标签、style标签  开始
+			String htmlStr = map.get("detail").toString();
+			String textStr = "";
+		    java.util.regex.Pattern p_script;
+		    java.util.regex.Matcher m_script;
+		    java.util.regex.Pattern p_style;
+		    java.util.regex.Matcher m_style;
+		    java.util.regex.Pattern p_html;
+		    java.util.regex.Matcher m_html;
+		    java.util.regex.Pattern p_space;
+		    java.util.regex.Matcher m_space;
+		    try {
+		        //定义script的正则表达式{或<script[^>]*?>[\\s\\S]*?<\\/script>
+		        String regEx_script = "<[\\s]*?script[^>]*?>[\\s\\S]*?<[\\s]*?\\/[\\s]*?script[\\s]*?>";
+		        //定义style的正则表达式{或<style[^>]*?>[\\s\\S]*?<\\/style>
+		        String regEx_style = "<[\\s]*?style[^>]*?>[\\s\\S]*?<[\\s]*?\\/[\\s]*?style[\\s]*?>";
+		        String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
+		        String regEx_space = "&(.*?);";// 定义以&开头以;结尾的占位符
+		        
+		        p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
+		        m_script = p_script.matcher(htmlStr);
+		        htmlStr = m_script.replaceAll(""); // 过滤script标签
+		        p_style = Pattern.compile(regEx_style, Pattern.CASE_INSENSITIVE);
+		        m_style = p_style.matcher(htmlStr);
+		        htmlStr = m_style.replaceAll(""); // 过滤style标签
+		        p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
+		        m_html = p_html.matcher(htmlStr);
+		        htmlStr = m_html.replaceAll(""); // 过滤html标签
+		        p_space = Pattern.compile(regEx_space, Pattern.CASE_INSENSITIVE);
+		        m_space = p_space.matcher(htmlStr);
+		        htmlStr = m_space.replaceAll(""); //过滤以&开头以;结尾的占位符
+		        textStr = htmlStr;
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		    m.getModel().put("filterDetail", textStr);
+		  /*获取详情的内容，过滤html标签、script标签、style标签   结束*/
+			
+		}
+		
+		m.setViewName("Detail");
+		
+		// 百科详细信息-推荐企业
+		List<Map<Object, Object>> corporationTJQY =  corporationService.getMemberHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), MemberCode.ENTERPRISE);
+		m.getModel().put("corporationTJQY",corporationTJQY);
+		
+		// 百科详细页-热点资讯
+		m.getModel().put("articleListHYZX",searchArticle(Status.RECOMMEND_STATUS, 10, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), ArticleCode.THE_FOCUS));
+		
+		// 百科详细信息-最新商机
+		List<Map<Object, Object>> corporationZXSJ =  supplyService.getSupplyHotList(SiteInfo.SITE_ID, Status.RECOMMEND_STATUS, EnumArticleType.SORT_STATUS.getValue(), EnumArticleType.ORDER_DESC.getValue(), SupplyCode.BUSINESS, 5,PicFormatType.SUPPLY_SOLR_IMAGE_OLD_BIG,PicFormatType.SUPPLY_SOLR_IMAGE_BIG);
+		m.getModel().put("corporationZXSJ",corporationZXSJ);
+		
+		//公用信息
+        m.getModel().put("siteDetail", super.getSiteDetail());
+        //缓存内部的URL 重新定义头尾信息
+        Object cache=null;
+        String cacheKey=CacheEnum.SITEID_PORTAL_Detail.toString();
+        cacheKey=cacheKey.replace("SITEID", String.valueOf(SiteInfo.SITE_ID));
+        cacheKey=cacheKey.replace("PORTAL", "CNCYCLOPEDIA_NEW");
+        cache=cacheManagerDao.get(cacheKey);
+        Map<String,String> mapTopAndFooter=null;
+		if(null==cache){
+			//HTMLContents.init(PropertyPlaceholderConfigurerExt.getContextProperty("ENVIRONMENT").toString(),"detail");
+			EnvironmentContext.init();
+			mapTopAndFooter=new HashMap<String,String>();
+			//mapTopAndFooter.put("detailTop", HTMLContents.getHEAD_HTML());
+			mapTopAndFooter.put("detailTop", HTMLContents.getDetailTop_HTML());
+			mapTopAndFooter.put("detailFooter", HTMLContents.getBOTTOM_HTML());
+			cacheManagerDao.set(cacheKey, mapTopAndFooter);
+
+		}else{
+			mapTopAndFooter=(Map<String,String>) cache;
+		}
+		m.getModel().put("mapTopAndFooter", mapTopAndFooter);
+		return m;
+	}
+
+	public List<Map<Object, Object>> searchArticle(int status, int num, int sort, int order, String code){
+		List<Map<Object, Object>> listMap = articleService.getArticleHotList(SiteInfo.SITE_ID, status, num, sort, order, code);
+		return listMap;
+	}
+	/**
+	 * 异步请求-列表页-推荐企业
+	 * 
+	 * @param mav
+	 * @return
+	 */
+	@RequestMapping(value = "tjqybaike")
+	@ResponseBody
+	public ModelAndView tjqybaike(ModelAndView mav) {
+		
+		List<Map<Object, Object>> listMap = corporationService.getMemberHotList(SiteInfo.SITE_ID,Status.RECOMMEND_STATUS,5, SortType.CORPORATION_SORT, OrderType.CORPORATION_ASC,MemberCode.ENTERPRISE);
+		mav.getModel().put("corporationListTJQY_Baike", listMap);
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("tjqybaike");
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * Industry(行业资讯) 
+	 * @param mav
+	 * @return  
+	 * ModelAndView 
+	 * @exception  
+	 * @since  1.0
+	 */
+	@RequestMapping(value = "industry")
+	@ResponseBody
+	public ModelAndView Industry(ModelAndView mav) {
+		
+		List<Map<Object, Object>> listMap = articleService.getArticleHotList(SiteInfo.SITE_ID,8, 10, 0, 0, ArticleCode.INDUSTRY);
+		
+		mav.getModel().put("articleListZHTJ", listMap);
+		mav.getModel().put("siteDetail", super.getSiteDetail());
+		mav.setViewName("Industry");
+		return mav;
+	}
+	
+}

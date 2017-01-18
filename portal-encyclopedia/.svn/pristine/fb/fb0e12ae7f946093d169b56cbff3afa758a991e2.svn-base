@@ -1,0 +1,7 @@
+package com.wangku.was.encyclopedia.constant;
+
+public class MemberCode {
+	
+	public static final String  ENTERPRISE = "123"; //推荐企业
+	
+}

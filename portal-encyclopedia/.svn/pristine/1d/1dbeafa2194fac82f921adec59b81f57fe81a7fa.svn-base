@@ -1,0 +1,34 @@
+<#assign ctxPath=request.contextPath>
+<#global webRoot="${ctxPath!}/"> 
+
+<!-- 行业资讯的路径 -->
+<#global information ="http://zixun.99114.com/"> 
+
+<#-- 静态工程地址 -->
+<#global commonStaticUrl="http://wk-static.99114.net">
+
+<#global staticRoot="${ctxPath!}/static"> 
+<#global templateRoot="${ctxPath!}/template"> 
+<#--头部集成路径-->
+<#global portalTopUrl="${siteDetail.portalTopUrl!}">
+<#--底部集成路径-->
+<#global portalFooterUrl="${siteDetail.portalFooterUrl!}">
+
+<#--登录路径-->
+<#if siteDetail.id?exists>
+	<#global loginUrl="http://portal.99114.net/login/toIndex?siteId=${siteDetail.id!}&">
+<#else>
+	<#global loginUrl="http://portal.99114.net/login/toIndex?siteId=1&">
+</#if>
+<#--注册路径-->
+<#if siteDetail.id?exists>
+	<#global registerUrl="http://wk-work.99114.net/login/gotoRegister?siteId=${siteDetail.id!}&backUrl=http://wk-baike.99114.net">
+<#else>
+	<#global registerUrl="http://wk-work.99114.net/login/gotoRegister?siteId=1&backUrl=http://wk-baike.99114.net">
+</#if>
+<#--广告-->
+<#assign ad=JspTaglibs["/WEB-INF/tags/adverties.tld"]>
+<script type="text/javascript" src="${commonStaticUrl}/static/portal/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="${templateRoot}/js/global.js"></script>
+<link type="text/css" href="${templateRoot}/css/base.css" rel="stylesheet" />
+<script type="text/javascript" src="${templateRoot}/js/search.js"></script>

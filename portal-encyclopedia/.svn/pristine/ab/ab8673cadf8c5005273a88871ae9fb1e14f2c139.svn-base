@@ -1,0 +1,42 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<#include "/common/pageGlobal.ftl" />
+<script type="text/javascript">
+function delCart(id){
+	if(!confirm("确认要删除吗？"))
+		return;
+	delProduct(id);
+}
+</script>
+<#if cartList?exists>
+<div class="shoppingList topMuneListCon show1"  id="shoppingList" style="display:block;">
+<#list cartList! as l>
+     <#list l.cartVoList as product>
+           <div class="shoppingListCon">
+                <p><a href="${toTradeUrl!}" target="_blank">${product.supplyName}</a></p>
+                <span class="num">
+                <a href="javascript:void(0);" class="btn_jian" onclick="updateProductNum('${product.id}','3');">-</a>
+                <input id="productNum_${product.id}" type="text" value="${product.quantity}"   
+                max="${product.storeNum}" min ="${product.minNumber}" 
+                class="text_input" onkeyup="updateProductNum('${product.id}','1')" />
+                <input type="hidden" id="num_${product.id}" name="num" value="${product.quantity}" />
+                <a href="javascript:void(0);" class="btn_jia" onclick="updateProductNum('${product.id}','2');">+</a>
+                </span>
+                <a href="javascript:void(0);" onclick="delCart('${product.id}');"><div class="end"></div></a>
+            </div>
+      </#list>
+</#list> 
+      <div class="toSet"><a href="${toTradeUrl!}" target="_blank">去结算</a></div>
+</div>
+<#else>
+
+<div class="shoppingListno topMuneListCon show1"  id="shoppingList" style="display:block;">
+	<!--进货单中暂未添加任何货品 start -->
+      
+            <p>进货单中暂未添加任何货品</p> 
+            <a href="${toTradeUrl!}" target="_blank"  rel="nofollow">查看进货单</a> 
+     
+    <!--进货单中暂未添加任何货品 end -->
+</div>
+</#if>
+
+                    

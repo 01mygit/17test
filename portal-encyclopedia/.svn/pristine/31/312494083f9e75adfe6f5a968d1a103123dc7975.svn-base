@@ -1,0 +1,25 @@
+<#--产品百科页推荐企业-->
+<#list corporationListTJQY_Baike! as l>
+<#if l_index lt 5>
+<li>
+	<a class="art2R-h392Pic" href="${siteDetail.URLMAP.shopUrl!}/${l.memberId!}" target="_blank">
+	<img src="${l.logo!}"></a>
+	<h3>
+		<a href="${siteDetail.URLMAP.shopUrl!}/${l.memberId!}" target="_blank">
+				<#if l.corporationName?? && l.corporationName?length gt 12>
+                   ${l.corporationName?substring(0,12)}
+                <#else>
+                   ${l.corporationName!}
+                </#if>
+		</a>
+	</h3>
+	<p>
+				<#if l.summary?? && l.summary?length gt 20>
+                   ${l.summary?substring(0,20)}...
+                <#else>
+                   ${l.summary!}
+                </#if>
+    </p>
+</li>
+</#if>
+</#list>

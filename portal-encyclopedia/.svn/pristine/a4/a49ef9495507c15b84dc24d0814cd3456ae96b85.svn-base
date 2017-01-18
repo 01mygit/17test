@@ -1,0 +1,13 @@
+package com.wangku.was.encyclopedia.utils;
+
+import java.util.Map;
+
+public class LoginUtil {
+	public static boolean checkIsLogin(Map<Object, Object> loginMap){
+		boolean isLogin = false;
+		if(null != loginMap && loginMap.size() > 0){
+			isLogin = true;
+		}
+		return isLogin;
+	}
+}

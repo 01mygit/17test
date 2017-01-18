@@ -1,0 +1,9 @@
+package com.wangku.was.encyclopedia.enums;
+
+public enum CacheEnum {
+	//  缓存key命名结构
+	//	站点ID：根据域名获取当前站点ID
+	//	工程名称：当前工程的名称
+	SITEID_PORTAL,
+	SITEID_PORTAL_Detail,
+}

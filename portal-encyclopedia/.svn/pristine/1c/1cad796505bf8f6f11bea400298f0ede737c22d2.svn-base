@@ -1,0 +1,5 @@
+   <#list baikeRCZD! as l>
+			<#if (l_index < 3)>
+                <p><i class="i_o">${l_index+1}</i><a href="/${l.id!}.html" class="a_o" target="_blank">${l.title}</a></p>
+             </#if>
+    	</#list>

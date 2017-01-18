@@ -1,0 +1,27 @@
+/**
+ * 
+ */
+package com.wangku.was.encyclopedia.utils;
+
+import com.wangku.was.categorynet.common.utils.HTMLContents;
+
+
+/**
+ * @author 		linyajun
+ *
+ * @date   		2014年6月24日
+ *
+ * @description 
+ **/
+public class EnvironmentContext {
+
+	private final static String TOP_URL=ResourceFileUtil.getTopUrl();
+	
+	private final static String BOTTOM_URL=ResourceFileUtil.getBottomUrl();
+	private final static String DETAILTOP_URL=ResourceFileUtil.getDetailTopUrl();
+
+	public static void init(){
+
+		 HTMLContents.initSendHttp(TOP_URL, BOTTOM_URL,DETAILTOP_URL);
+	}
+}

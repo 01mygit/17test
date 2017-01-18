@@ -1,0 +1,18 @@
+<#list baikePPTJ! as l>
+			<#if (l_index < 6)>
+		         <li>
+		         <div class="fr i_rz">
+		              <h4><a href="/${l.id!}.html" target="_blank">${l.title}</a></h4>
+		                  <p>
+		              	<#if l.summary?? && l.summary?length gt 30>
+             				${l.summary?substring(0,30)}...
+            				<#else>
+            					${l.summary!}
+            			</#if>
+		              </p>
+					  <p>相关词条：<span>${l.tag!}</span></p>
+		         </div>
+		         <a href="/${l.id!}.html" class="img_w100" target="_blank"><span><img src="${l.pictureurl!}" alt="${l.title!}" /></span></a>
+		         </li>
+        	</#if>
+      </#list>  

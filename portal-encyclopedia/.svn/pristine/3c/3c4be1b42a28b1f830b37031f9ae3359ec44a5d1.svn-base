@@ -1,0 +1,150 @@
+package com.wangku.was.encyclopedia.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.wangku.was.categorynet.common.cart.dubbo.ICartService;
+import com.wangku.was.encyclopedia.utils.LoginUtil;
+import com.wangku.was.encyclopedia.web.SiteBaseController;
+import com.wangku.wjf.common.log.LogMgr;
+
+
+/**
+ * @Copyright 北京网库信息技术股份有限公司
+ * @Description: 购物车信息 
+ * @author liuwenjie  
+ * @Modified liuwenjie      
+ * @date 2013-7-11 上午11:10:23   
+ * @version V1.0     
+*/
+@Controller
+@RequestMapping(value = "cart")
+public class CartController extends SiteBaseController{
+    @Autowired
+    ICartService cartService;
+
+    /**
+     * cartList(购物车列表)
+     * @param m
+     * @return ModelAndView
+     * @exception
+     * @since 1.0
+     */
+
+    @RequestMapping(value = "/list")
+    @ResponseBody
+    public ModelAndView cartList(ModelAndView mav, HttpServletRequest request) {
+    	Map<Object, Object> loginMap = super.loginUser();
+		boolean isLogin = false;
+		if(null != loginMap && loginMap.size() > 0){
+			isLogin = true;
+		}
+		
+		mav.getModel().put("loginUser", loginMap);
+		mav.getModel().put("isLogin", isLogin);
+    	long memberId = 0;
+        try {
+        	if(LoginUtil.checkIsLogin(loginMap)){
+        		memberId = Long.valueOf(loginMap.get("memberId").toString());
+        	}
+        } catch (Exception e) {
+            memberId = 0;
+        }
+        if(memberId>0){
+            List<Map<Object, Object>> cartList = cartService.getCartListByMemberId(memberId);
+            if(CollectionUtils.isNotEmpty(cartList)){
+                mav.getModel().put("cartList", cartList);
+            }
+        }
+        mav.getModel().put("siteDetail", super.getSiteDetail());
+        return mav;
+    }
+    /**
+     * 
+     * del(删除购物车)
+     * @param m
+     * @param id
+     * @return  
+     * ModelAndView 
+     * @exception  
+     * @since  1.0
+     */
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public Map<String, Object> cartdel(ModelAndView m,@RequestParam("id") long id ,HttpServletRequest request) {
+    	long memberId = 0;
+    	Cookie[] cookies = request.getCookies();
+		
+		if (cookies != null && cookies.length > 0) {
+			
+			for (Cookie ck : cookies) {
+				if (ck.getName().equals("memberId")) {
+					// 登录了
+					memberId = Long.valueOf(ck.getValue().toString());
+					LogMgr.writeSysInfoLog("cookies-fromMemberId:"+memberId);
+					break;
+				}
+			}
+		}
+        boolean flag=false;
+        if(memberId>0){
+            flag = cartService.deleteCartById(memberId,id);
+        }
+        Map<String, Object> map = new HashMap<String,Object>();
+        if(flag){
+            map.put("status", 0);
+        }else{
+            map.put("status", 1);
+        }
+        return map;
+    }
+    /**
+     * 
+     * update(修改购物车) 
+     * @param m
+     * @param id
+     * @param increment
+     * @param updateCount
+     * @return  
+     * ModelAndView 
+     * @exception  
+     * @since  1.0
+     */
+    @RequestMapping(value = "/update")
+    @ResponseBody
+    public Map<Object, Object> cartupdate(ModelAndView m,@RequestParam("id") long id, @RequestParam("increment") int increment
+            , @RequestParam("updateCount") int updateCount,HttpServletRequest request) {
+    	long memberId = 0;
+    	Cookie[] cookies = request.getCookies();
+		
+		if (cookies != null && cookies.length > 0) {
+			
+			for (Cookie ck : cookies) {
+				if (ck.getName().equals("memberId")) {
+					// 登录了
+					memberId = Long.valueOf(ck.getValue().toString());
+					LogMgr.writeSysInfoLog("cookies-memberId:"+memberId);
+					break;
+				}
+			}
+		}
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        if(memberId>0){
+            map = cartService.updateQuantity(memberId,increment, id, updateCount);
+        }
+        map.put("id", id);
+        return map;
+    }
+}

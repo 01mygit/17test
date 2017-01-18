@@ -1,0 +1,9 @@
+memcached.servers=192.168.50.25:11211
+default.memcached.servers=192.168.50.25:11211
+shop.memcached.servers=192.168.50.25:11211
+member.memcached.servers=192.168.50.25:11211
+oppor.memcached.servers=192.168.50.25:11211
+system.memcached.servers=192.168.50.25:11211
+img.memcached.servers=192.168.50.25:11211
+home.memcached.servers=192.168.50.25:11211
+other.memcached.servers=192.168.50.25:11211

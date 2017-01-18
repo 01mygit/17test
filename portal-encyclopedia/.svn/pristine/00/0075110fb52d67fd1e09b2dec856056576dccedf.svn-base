@@ -1,0 +1,6 @@
+<#list baikeZD! as l>
+			<#if (l_index < 1)>
+               <h3><a href="/${l.id!}.html" target="_blank">${l.title!}</a></h3>
+               <p>${l.summary!}<a href="/${l.id!}.html" class="ff6622" target="_blank">[详细]</a></p>
+            </#if>
+</#list>
